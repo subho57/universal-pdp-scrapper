@@ -34,7 +34,7 @@ export default class Google {
       const title = `${capitalize(pathName)} ${$('head > title').text().trim()}`.replace(/\d+$/, '');
       const results = await getJson('google', {
         api_key: this.API_KEY,
-        q: [...new Set(`${title} from ${domain}`.toLowerCase().split(' '))].join(' '),
+        q: Array.from(new Set(`${title} from ${domain}`.toLowerCase().split(' '))).join(' '),
         gl: 'us',
         hl: 'en',
         tbm: 'isch',

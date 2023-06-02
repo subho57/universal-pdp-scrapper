@@ -215,7 +215,7 @@ export default class Ikea {
         product_url: this.url,
         glbs:
           glbs?.models.map((model: Model) => model.url) ??
-          [...new Set(html!.match(/https:\/\/web-api\.ikea\.com\/dimma\/assets\/.[^"]*\.glb/g))].sort(),
+          Array.from(new Set(html!.match(/https:\/\/web-api\.ikea\.com\/dimma\/assets\/.[^"]*\.glb/g))).sort(),
       };
     } else {
       res = {
