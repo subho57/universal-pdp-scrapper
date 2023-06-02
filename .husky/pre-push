@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+NODE_OPTIONS="--max-old-space-size=7168" yarn test && yarn lint && yarn build
