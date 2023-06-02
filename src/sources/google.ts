@@ -3,10 +3,10 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import { getJson } from 'serpapi';
 
-import CONFIG from '@/config';
-import Logger from '@/providers/log';
-import type { ScrapperOutput } from '@/types/scrapperOutput';
-import { capitalize } from '@/utils';
+import CONFIG from '../config';
+import Logger from '../providers/log';
+import type { ScrapperOutput } from '../types/scrapperOutput';
+import { capitalize } from '../utils';
 
 const logger = new Logger('googleScrapper');
 

@@ -2,8 +2,7 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 
-import Logger from '@/providers/log';
-
+import Logger from './providers/log';
 import Article from './sources/article';
 import Etsy from './sources/etsy';
 import Fineartamerica from './sources/fineartamerica';

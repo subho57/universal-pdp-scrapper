@@ -1,6 +1,5 @@
-import CONFIG from '@/config';
-import Logger from '@/providers/log';
-
+import CONFIG from '../../config';
+import Logger from '../../providers/log';
 import { getClient } from './client';
 
 const logger = new Logger('OpenAIService');

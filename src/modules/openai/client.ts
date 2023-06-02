@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 
-import CONFIG from '@/config';
+import CONFIG from '../../config';
 
 export const getClient = () =>
   new OpenAIApi(

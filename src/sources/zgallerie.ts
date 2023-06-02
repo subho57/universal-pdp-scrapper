@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 
-import type { ScrapperOutput } from '@/types/scrapperOutput';
+import type { ScrapperOutput } from '../types/scrapperOutput';
 
 export default class Zgallerie {
   readonly url: string;

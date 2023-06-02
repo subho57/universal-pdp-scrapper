@@ -1,12 +1,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-await-in-loop */
-import Scrapper from '@/client';
-import CONFIG from '@/config';
-import { getCompletion } from '@/modules/openai/operations';
-import Logger from '@/providers/log';
-import type { ScrapperOutput } from '@/types/scrapperOutput';
-import { Types } from '@/types/scrapperOutput';
-import { capitalize, removeNullsAndUndefine } from '@/utils';
+import Scrapper from './client';
+import CONFIG from './config';
+import { getCompletion } from './modules/openai/operations';
+import Logger from './providers/log';
+import type { ScrapperOutput } from './types/scrapperOutput';
+import { Types } from './types/scrapperOutput';
+import { capitalize, removeNullsAndUndefine } from './utils';
 
 const logger = new Logger('scrapperService');
 
