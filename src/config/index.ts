@@ -14,7 +14,7 @@ export default {
     ENV: (process.env.NODE_ENV || 'development') as 'development' | 'production',
   },
   SERP: {
-    API_KEY: process.env.SERP_API_KEY,
+    API_KEY: process.env.SERP_API_KEY || '',
   },
   OPEN_AI: {
     API_KEY: process.env.OPEN_AI_SECRET_KEY ?? '',

@@ -13,10 +13,11 @@ const logger = new Logger('googleScrapper');
 export default class Google {
   readonly url: string;
 
-  private readonly API_KEY = CONFIG.SERP.API_KEY;
+  private readonly API_KEY: string;
 
   constructor(url: string) {
     this.url = url;
+    this.API_KEY = CONFIG.SERP.API_KEY;
   }
 
   async extract(html?: string) {
@@ -28,12 +29,12 @@ export default class Google {
       const parsedURL = new URL(this.url);
       const domain = parsedURL.hostname.replace('www.', '');
       const domainParts = domain.split('.');
-      const pathName = parsedURL.pathname.replaceAll('/', ' ');
+      const pathName = parsedURL.pathname.replaceAll('/', ' ').trim();
       const $ = load(html!);
-      const title = ($('head > title').text().trim() ?? capitalize(pathName.split(' ').at(-1) ?? '')).replace(/\d+$/, '');
+      const title = `${capitalize(pathName)} ${$('head > title').text().trim()}`.replace(/\d+$/, '');
       const results = await getJson('google', {
         api_key: this.API_KEY,
-        q: `${domain} ${title}`,
+        q: [...new Set(`${title} from ${domain}`.toLowerCase().split(' '))].join(' '),
         gl: 'us',
         hl: 'en',
         tbm: 'isch',

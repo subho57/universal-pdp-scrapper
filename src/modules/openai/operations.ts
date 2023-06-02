@@ -1,13 +1,13 @@
 import CONFIG from '@/config';
 import Logger from '@/providers/log';
 
-import openai from './client';
+import { getClient } from './client';
 
 const logger = new Logger('OpenAIService');
 
 export const getCompletion = async (prompt: string) => {
   try {
-    const result = await openai.createChatCompletion({
+    const result = await getClient().createChatCompletion({
       model: CONFIG.OPEN_AI.MODEL,
       messages: [
         {

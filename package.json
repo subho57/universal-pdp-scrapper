@@ -1,6 +1,6 @@
 {
   "name": "universal-pdp-scrapper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A universal pdp scrapper using cheerio & ChatGPT",
   "repository": {
     "type": "git",
@@ -21,7 +21,11 @@
     "scrapper",
     "cheerio",
     "OpenAI API",
-    "ChatGPT"
+    "ChatGPT",
+    "ikea-scrapper",
+    "3d-model-scrapper",
+    "amazon-scrapper",
+    "subho57"
   ],
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

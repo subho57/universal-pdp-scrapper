@@ -1,23 +1,25 @@
 # Universal PDP Scrapper
 
+[![NPM](https://img.shields.io/npm/v/universal-pdp-scrapper.svg)](https://www.npmjs.com/package/universal-pdp-scrapper) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 This is a universal PDP scrapper that can scrape any product page and extract the following information:
 
 ```json
-  product_name?: string;
-  images?: string[];
-  height?: string;
-  width?: string;
-  depth?: string;
-  material?: string;
-  price?: string;
-  sku?: string;
-  artist?: string;
-  type?: Types;
-  product_url?: string;
-  source?: string;
-  glbs?: string[];
-  glb_to_use?: string;
-  'supporting-surface'?: 'floor' | 'wall';
+product_name?: string;
+images?: string[];
+height?: string;
+width?: string;
+depth?: string;
+material?: string;
+price?: string;
+sku?: string;
+artist?: string;
+type?: Types;
+product_url?: string;
+source?: string;
+glbs?: string[];
+glb_to_use?: string;
+'supporting-surface'?: 'floor' | 'wall';
 ```
 
 ## How to use
@@ -66,3 +68,7 @@ scrapper.scrape('https://www.ikea.com/us/en/p/jokkmokk-table-and-4-chairs-antiqu
 - [x] Uses OpenAI to extract estimated information from the product page
 - [x] Uses SerpAPI to extract images from product pages using Google Image Search
 - [x] Uses Cheerio to scrape product pages for some popular websites.
+
+**NOTE**: This library doesn't solve the issue of CORS for images or glbs. If you encounter cors, its better to use this library in the server environment and download the images and glbs to your server and serve them from there.
+
+[![universal-pdp-scrapper npminsights.com](https://npminsights.com/api/package/readme-image/universal-pdp-scrapper?v=2023-02-22)](https://npminsights.com/package/universal-pdp-scrapper)
