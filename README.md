@@ -59,6 +59,10 @@ scrapper.scrape('https://www.ikea.com/us/en/p/jokkmokk-table-and-4-chairs-antiqu
 });
 ```
 
+#### Here's demo of running the scrapper in a server environment integrated with a react app.
+
+https://github.com/subho57/universal-pdp-scrapper/assets/55734806/2084481f-8835-4436-98db-e136610a15a4
+
 ## Features
 
 - [x] Supports ES6 Async/Await
