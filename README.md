@@ -32,36 +32,11 @@ npm i universal-pdp-scrapper
 
 ### 2. Demo
 
-```ts
-import { UniversalPDPScrapper } from 'universal-pdp-scrapper';
+Here's a demo of running the scrapper in a server environment integrated with a React app
 
-/**
- * Config is optional. If not provided, it will use the default values from environment variables.
- * Setting config using .env vars:
- * 
- * OPEN_AI_SECRET_KEY = ''
- * OPEN_AI_ORG_ID     = '
- * OPEN_AI_MODEL_ID   = ''
- * SERP_API_KEY       = ''
- * 
- * Add these variables in your .env file.
- */
-
-const scrapper = new UniversalPDPScrapper({
-  openaiApiKey: '',
-  openaiOrgId: '', // Defaults to undefined (useful when user is included in multiple orgs)
-  openaiModelId: '', // Defaults to gpt-3.5-turbo
-  serpApiKey: '', // For scraping product images
-});
-
-scrapper.scrape('https://www.ikea.com/us/en/p/jokkmokk-table-and-4-chairs-antique-stain-50211104/').then((data) => {
-  console.log('Scrapped Data:', data);
-});
-```
-
-#### Here's demo of running the scrapper in a server environment integrated with a react app.
-
-https://github.com/subho57/universal-pdp-scrapper/assets/55734806/2084481f-8835-4436-98db-e136610a15a4
+<video loop muted autoPlay playsInline width="100%" height="auto" controlsList="nodownload noremoteplayback noplaybackrate">
+  <source src="https://github.com/subho57/universal-pdp-scrapper/assets/55734806/2084481f-8835-4436-98db-e136610a15a4" type="video/mp4">
+</video>
 
 ## Features
 

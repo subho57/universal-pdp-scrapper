@@ -35,5 +35,6 @@
       "@/*": ["./src/*"]
     }
   },
+  "include": ["node_modules/microbundle/index.d.ts", "./src/**/*"],
   "exclude": ["./dist/**/*", "./node_modules/**/*"]
 }

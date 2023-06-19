@@ -1,6 +1,6 @@
 {
   "name": "universal-pdp-scrapper",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A universal pdp scrapper using cheerio & ChatGPT",
   "repository": {
     "type": "git",
@@ -27,11 +27,10 @@
     "amazon-scrapper",
     "subho57"
   ],
-  "types": "./dist/src/index.d.ts",
-  "typings": "./dist/src/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.module.mjs",
-  "exports": "./dist/index.modern.js",
+  "types": "dist/src/index.d.ts",
+  "typings": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.modern.js",
   "unpkg": "./dist/index.umd.js",
   "source": "src/index.ts",
   "engines": {
@@ -40,8 +39,8 @@
   },
   "scripts": {
     "build-types": "tsc --noEmit --pretty",
-    "build": "microbundle-crl && typedoc src/index.ts",
-    "start": "microbundle-crl watch",
+    "build": "microbundle-crl --format modern,cjs,umd && typedoc src/index.ts",
+    "start": "microbundle-crl --format modern,cjs,umd watch",
     "prepare": "husky install && npm i -g yarn",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
