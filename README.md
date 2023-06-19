@@ -33,7 +33,7 @@ npm i universal-pdp-scrapper
 ### 2. Demo
 
 ```ts
-import UniversalPDPScrapper from 'universal-pdp-scrapper';
+import { UniversalPDPScrapper } from 'universal-pdp-scrapper';
 
 /**
  * Config is optional. If not provided, it will use the default values from environment variables.

@@ -1,4 +1,4 @@
-import UniversalPDPScrapper from './index';
+import { UniversalPDPScrapper } from './index';
 
 describe('UniversalPDPScrapper', () => {
   it('should scrape ikea product page', async () => {

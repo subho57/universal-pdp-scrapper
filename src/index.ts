@@ -25,7 +25,7 @@ const determineType = (searchString: string) => {
   }
 };
 
-export default class UniversalPDPScrapper {
+export class UniversalPDPScrapper {
   constructor(config?: { openaiApiKey?: string; openaiOrgId?: string; openaiModelId?: string; serpApiKey?: string }) {
     if (!config) {
       return;
@@ -94,3 +94,5 @@ export default class UniversalPDPScrapper {
     }
   };
 }
+
+export { ScrapperOutput, Types };
