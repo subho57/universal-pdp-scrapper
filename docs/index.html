@@ -13,7 +13,7 @@
 <div class="tsd-page-title">
 <h2>universal-pdp-scrapper</h2></div>
 <div class="tsd-panel tsd-typography"><a id="md:universal-pdp-scrapper" class="tsd-anchor"></a><h1><a href="#md:universal-pdp-scrapper">Universal PDP Scrapper</a></h1><p><a href="https://www.npmjs.com/package/universal-pdp-scrapper"><img src="https://img.shields.io/npm/v/universal-pdp-scrapper.svg" alt="NPM"></a> <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="JavaScript Style Guide"></a></p>
-<p>This is a universal PDP scrapper that can scrape any product page and extract the following information:</p>
+<p>This is a universal PDP scrapper that can scrape any product detail page and extract the following information:</p>
 <pre><code class="language-json"><span class="hl-0">product_name?: string;</span><br/><span class="hl-0">images?: string[];</span><br/><span class="hl-0">height?: string;</span><br/><span class="hl-0">width?: string;</span><br/><span class="hl-0">depth?: string;</span><br/><span class="hl-0">material?: string;</span><br/><span class="hl-0">price?: string;</span><br/><span class="hl-0">sku?: string;</span><br/><span class="hl-0">artist?: string;</span><br/><span class="hl-0">type?: Types;</span><br/><span class="hl-0">product_url?: string;</span><br/><span class="hl-0">source?: string;</span><br/><span class="hl-0">glbs?: string[];</span><br/><span class="hl-0">glb_to_use?: string;</span><br/><span class="hl-0">&#39;supporting-surface&#39;?: &#39;floor&#39; | &#39;wall&#39;;</span>
 </code><button>Copy</button></pre>
 <a id="md:how-to-use" class="tsd-anchor"></a><h2><a href="#md:how-to-use">How to use</a></h2><a id="md:1-install" class="tsd-anchor"></a><h3><a href="#md:1-install">1. Install</a></h3><pre><code class="language-bash"><span class="hl-1">npm</span><span class="hl-0"> </span><span class="hl-2">i</span><span class="hl-0"> </span><span class="hl-2">universal-pdp-scrapper</span>
@@ -26,6 +26,7 @@
 <a id="md:features" class="tsd-anchor"></a><h2><a href="#md:features">Features</a></h2><ul>
 <li><input checked="" disabled="" type="checkbox"> Supports ES6 Async/Await</li>
 <li><input checked="" disabled="" type="checkbox"> Supports CommonJS require</li>
+<li><input checked="" disabled="" type="checkbox"> Tree-shakable</li>
 <li><input checked="" disabled="" type="checkbox"> Can be used both in Node and Browser environments.</li>
 <li><input checked="" disabled="" type="checkbox"> Written in Typescript</li>
 <li><input checked="" disabled="" type="checkbox"> Uses OpenAI to extract estimated information from the product page</li>
@@ -34,6 +35,7 @@
 </ul>
 <p><strong>NOTE</strong>: This library doesn&#39;t solve the issue of CORS for images or glbs. If you encounter cors, its better to use this library in the server environment and download the images and glbs to your server and serve them from there.</p>
 <p><a href="https://npminsights.com/package/universal-pdp-scrapper"><img src="https://npminsights.com/api/package/readme-image/universal-pdp-scrapper?v=2023-02-22" alt="universal-pdp-scrapper npminsights.com"></a></p>
+<a id="md:module-stats" class="tsd-anchor"></a><h2><a href="#md:module-stats">Module Stats</a></h2><p><a href="./stats.html">See Rollup Visualizer</a></p>
 </div></div>
 <div class="col-sidebar">
 <div class="page-menu">
@@ -64,13 +66,37 @@
 <ul>
 <li><a href="#md:1-install"><span>1. <wbr/>Install</span></a></li>
 <li><a href="#md:2-demo"><span>2. <wbr/>Demo</span></a></li></ul></li>
-<li><a href="#md:features"><span>Features</span></a></li></ul></li></ul></li></ul></div></details></div>
+<li><a href="#md:features"><span>Features</span></a></li>
+<li><a href="#md:module-stats"><span>Module <wbr/>Stats</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>universal-<wbr/>pdp-<wbr/>scrapper</span></a>
 <ul class="tsd-small-nested-navigation">
 <li><a href="enums/Types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-8"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-enum)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z" fill="var(--color-text)"></path></g></svg><span>Types</span></a></li>
-<li><a href="classes/UniversalPDPScrapper.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>UniversalPDPScrapper</span></a></li>
-<li><a href="interfaces/ScrapperOutput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-256"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)"></path></g></svg><span>Scrapper<wbr/>Output</span></a></li></ul></nav></div></div></div>
+<li><a href="classes/Article.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Article</span></a></li>
+<li><a href="classes/Etsy.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Etsy</span></a></li>
+<li><a href="classes/Fineartamerica.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Fineartamerica</span></a></li>
+<li><a href="classes/Google.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Google</span></a></li>
+<li><a href="classes/Ikea.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Ikea</span></a></li>
+<li><a href="classes/Potterybarn.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Potterybarn</span></a></li>
+<li><a href="classes/Rugsdotcom.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Rugsdotcom</span></a></li>
+<li><a href="classes/UniversalPDPScrapper.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>UniversalPDPScrapper</span></a></li>
+<li><a href="classes/Wayfair.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Wayfair</span></a></li>
+<li><a href="classes/Westelm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Westelm</span></a></li>
+<li><a href="classes/Zgallerie.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Zgallerie</span></a></li>
+<li><a href="interfaces/CatalogRefs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-256"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)"></path></g></svg><span>Catalog<wbr/>Refs</span></a></li>
+<li><a href="interfaces/Categorization.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Categorization</span></a></li>
+<li><a href="interfaces/Experimental.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Experimental</span></a></li>
+<li><a href="interfaces/IkeaModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Ikea<wbr/>Model</span></a></li>
+<li><a href="interfaces/IkeaProduct.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Ikea<wbr/>Product</span></a></li>
+<li><a href="interfaces/Image.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Image</span></a></li>
+<li><a href="interfaces/Model.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Model</span></a></li>
+<li><a href="interfaces/Products.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Products</span></a></li>
+<li><a href="interfaces/Rating.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Rating</span></a></li>
+<li><a href="interfaces/RevampPrice.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Revamp<wbr/>Price</span></a></li>
+<li><a href="interfaces/ScrapperOutput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Scrapper<wbr/>Output</span></a></li>
+<li><a href="interfaces/TechnicalCompliance.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Technical<wbr/>Compliance</span></a></li>
+<li><a href="interfaces/Variation.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Variation</span></a></li>
+<li><a href="functions/getOpenAiClient.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-64"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)"></path></g></svg><span>get<wbr/>Open<wbr/>Ai<wbr/>Client</span></a></li></ul></nav></div></div></div>
 <div class="tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
 <div class="overlay"></div></body></html>

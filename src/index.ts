@@ -2,8 +2,32 @@
 /* eslint-disable no-await-in-loop */
 import Scrapper from './client';
 import CONFIG from './config';
+import { getClient as getOpenAiClient } from './modules/openai/client';
 import { getCompletion } from './modules/openai/operations';
 import Logger from './providers/log';
+import Article from './sources/article';
+import Etsy from './sources/etsy';
+import Fineartamerica from './sources/fineartamerica';
+import Google from './sources/google';
+import Ikea, {
+  CatalogRefs,
+  Categorization,
+  Experimental,
+  IkeaModel,
+  IkeaProduct,
+  Image,
+  Model,
+  Products,
+  Rating,
+  RevampPrice,
+  TechnicalCompliance,
+  Variation,
+} from './sources/ikea';
+import Potterybarn from './sources/potterybarn';
+import Rugsdotcom from './sources/rugsdotcom';
+import Wayfair from './sources/wayfair';
+import Westelm from './sources/westelm';
+import Zgallerie from './sources/zgallerie';
 import type { ScrapperOutput } from './types/scrapperOutput';
 import { Types } from './types/scrapperOutput';
 import { capitalize, removeNullsAndUndefine } from './utils';
@@ -95,4 +119,30 @@ export class UniversalPDPScrapper {
   };
 }
 
-export { ScrapperOutput, Types };
+export {
+  Article,
+  CatalogRefs,
+  Categorization,
+  Etsy,
+  Experimental,
+  Fineartamerica,
+  getOpenAiClient,
+  Google,
+  Ikea,
+  IkeaModel,
+  IkeaProduct,
+  Image,
+  Model,
+  Potterybarn,
+  Products,
+  Rating,
+  RevampPrice,
+  Rugsdotcom,
+  ScrapperOutput,
+  TechnicalCompliance,
+  Types,
+  Variation,
+  Wayfair,
+  Westelm,
+  Zgallerie,
+};

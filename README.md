@@ -2,7 +2,7 @@
 
 [![NPM](https://img.shields.io/npm/v/universal-pdp-scrapper.svg)](https://www.npmjs.com/package/universal-pdp-scrapper) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-This is a universal PDP scrapper that can scrape any product page and extract the following information:
+This is a universal PDP scrapper that can scrape any product detail page and extract the following information:
 
 ```json
 product_name?: string;
@@ -42,6 +42,7 @@ Here's a demo of running the scrapper in a server environment integrated with a 
 
 - [x] Supports ES6 Async/Await
 - [x] Supports CommonJS require
+- [x] Tree-shakable
 - [x] Can be used both in Node and Browser environments.
 - [x] Written in Typescript
 - [x] Uses OpenAI to extract estimated information from the product page
@@ -51,3 +52,7 @@ Here's a demo of running the scrapper in a server environment integrated with a 
 **NOTE**: This library doesn't solve the issue of CORS for images or glbs. If you encounter cors, its better to use this library in the server environment and download the images and glbs to your server and serve them from there.
 
 [![universal-pdp-scrapper npminsights.com](https://npminsights.com/api/package/readme-image/universal-pdp-scrapper?v=2023-02-22)](https://npminsights.com/package/universal-pdp-scrapper)
+
+## Module Stats
+
+[See Rollup Visualizer](./stats.html)
