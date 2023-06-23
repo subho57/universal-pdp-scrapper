@@ -1,6 +1,6 @@
 {
   "name": "universal-pdp-scrapper",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A universal pdp scrapper using cheerio & ChatGPT",
   "repository": {
     "type": "git",
@@ -27,26 +27,31 @@
     "amazon-scrapper",
     "subho57"
   ],
-  "types": "dist/src/index.d.ts",
-  "typings": "dist/src/index.d.ts",
-  "main": "dist/index.js",
-  "module": "dist/index.modern.js",
-  "unpkg": "dist/index.umd.js",
   "source": "src/index.ts",
+  "main": "dist/index.js",
+  "umd:main": "dist/index.umd.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "require": "./dist/index.js",
+    "default": "./dist/index.modern.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "engines": {
     "node": ">=18.0.0",
     "yarn": ">=3.3.0"
   },
   "scripts": {
     "build-types": "tsc --noEmit --pretty",
-    "build": "microbundle --format modern,cjs,umd && typedoc src/index.ts && cp stats.html docs",
+    "build": "rimraf docs dist && microbundle && typedoc src/index.ts && cp stats.html docs && mv dist/src/* ./dist/ && rimraf dist/src",
     "start": "microbundle watch",
     "prepare": "husky install && npm i -g yarn",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
     "clean-install": "rm -rf node_modules yarn.lock && yarn install",
-    "test": "env-cmd jest",
+    "test": "env-cmd jest > test-report.log && echo 'Test Report: ./test-report.log'",
     "test:build": "run-s build",
     "lint": "eslint --ext .js,.ts .",
     "lint-fix": "eslint --fix --ext .js,.ts ."
