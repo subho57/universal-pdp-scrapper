@@ -50,7 +50,22 @@ const determineType = (searchString: string) => {
 };
 
 export class UniversalPDPScrapper {
-  constructor(config?: { openaiApiKey?: string; openaiOrgId?: string; openaiModelId?: string; serpApiKey?: string }) {
+  constructor(
+    config?: (
+      | {
+          serpApiKey?: string;
+          useSerpApi?: boolean;
+        }
+      | {
+          googleApiKey?: string;
+          googleCseId?: string;
+        }
+    ) & {
+      openaiApiKey?: string;
+      openaiOrgId?: string;
+      openaiModelId?: string;
+    }
+  ) {
     if (!config) {
       return;
     }
@@ -63,8 +78,17 @@ export class UniversalPDPScrapper {
     if (config.openaiModelId) {
       CONFIG.OPEN_AI.MODEL = config.openaiModelId;
     }
-    if (config.serpApiKey) {
+    if ('serpApiKey' in config && config.serpApiKey) {
       CONFIG.SERP.API_KEY = config.serpApiKey;
+    }
+    if ('useSerpApi' in config && config.useSerpApi) {
+      CONFIG.SERP.USE_SERP_API = config.useSerpApi;
+    }
+    if ('googleApiKey' in config && config.googleApiKey) {
+      CONFIG.GOOGLE.API_KEY = config.googleApiKey;
+    }
+    if ('googleCseId' in config && config.googleCseId) {
+      CONFIG.GOOGLE.CSE_ID = config.googleCseId;
     }
   }
 
@@ -77,7 +101,7 @@ export class UniversalPDPScrapper {
             Types
           ).join(
             ','
-          )}), price(whatever currency converted to dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json like this: { product_name, product_url, type, price, height, width, depth }`
+          )}), price(whatever currency converted to us dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json like this: { product_name, product_url, type, price, height, width, depth }`
         ),
       ]);
       removeNullsAndUndefine(partialScrapperOutput ?? {});

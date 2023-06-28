@@ -16,9 +16,12 @@
 <p>This is a universal PDP scrapper that can scrape any product detail page and extract the following information:</p>
 <pre><code class="language-json"><span class="hl-0">product_name?: string;</span><br/><span class="hl-0">images?: string[];</span><br/><span class="hl-0">height?: string;</span><br/><span class="hl-0">width?: string;</span><br/><span class="hl-0">depth?: string;</span><br/><span class="hl-0">material?: string;</span><br/><span class="hl-0">price?: string;</span><br/><span class="hl-0">sku?: string;</span><br/><span class="hl-0">artist?: string;</span><br/><span class="hl-0">type?: Types;</span><br/><span class="hl-0">product_url?: string;</span><br/><span class="hl-0">source?: string;</span><br/><span class="hl-0">glbs?: string[];</span><br/><span class="hl-0">glb_to_use?: string;</span><br/><span class="hl-0">&#39;supporting-surface&#39;?: &#39;floor&#39; | &#39;wall&#39;;</span>
 </code><button>Copy</button></pre>
+<p>Under the hood, it uses OpenAI to extract estimated information from the product page and Google Custom Search JSON API / SerpAPI to extract images from product pages using Google Image Search coupled with Ikea&#39;s product search API and some custom scrappers for some popular furniture websites.</p>
 <a id="md:how-to-use" class="tsd-anchor"></a><h2><a href="#md:how-to-use">How to use</a></h2><a id="md:1-install" class="tsd-anchor"></a><h3><a href="#md:1-install">1. Install</a></h3><pre><code class="language-bash"><span class="hl-1">npm</span><span class="hl-0"> </span><span class="hl-2">i</span><span class="hl-0"> </span><span class="hl-2">universal-pdp-scrapper</span>
 </code><button>Copy</button></pre>
-<a id="md:2-demo" class="tsd-anchor"></a><h3><a href="#md:2-demo">2. Demo</a></h3><p>Here&#39;s a demo of running the scrapper in a server environment integrated with a React app</p>
+<a id="md:2-usage" class="tsd-anchor"></a><h3><a href="#md:2-usage">2. Usage</a></h3><pre><code class="language-typescript"><span class="hl-3">import</span><span class="hl-0"> { </span><span class="hl-4">UniversalPDPScrapper</span><span class="hl-0"> } </span><span class="hl-3">from</span><span class="hl-0"> </span><span class="hl-2">&#39;universal-pdp-scrapper&#39;</span><span class="hl-0">;</span><br/><br/><span class="hl-5">// Initialize the client and set the API keys</span><br/><span class="hl-5">// You can set API Keys using environment variables as well: check [.env.sample](./.env.sample)</span><br/><span class="hl-6">const</span><span class="hl-0"> </span><span class="hl-7">client</span><span class="hl-0"> = </span><span class="hl-6">new</span><span class="hl-0"> </span><span class="hl-1">UniversalPDPScrapper</span><span class="hl-0">({</span><br/><span class="hl-0">    </span><span class="hl-4">openaiApiKey:</span><span class="hl-0"> </span><span class="hl-2">&#39;&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-4">openaiOrgId:</span><span class="hl-0"> </span><span class="hl-2">&#39;&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-4">openaiModelId:</span><span class="hl-0"> </span><span class="hl-2">&#39;&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-4">googleApiKey:</span><span class="hl-0"> </span><span class="hl-2">&#39;&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-4">googleCseId:</span><span class="hl-0"> </span><span class="hl-2">&#39;&#39;</span><br/><span class="hl-0">});</span><br/><span class="hl-6">const</span><span class="hl-0"> </span><span class="hl-7">result</span><span class="hl-0"> = </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-4">client</span><span class="hl-0">.</span><span class="hl-1">scrape</span><span class="hl-0">(</span><span class="hl-2">&#39;https://www.ikea.com/us/en/p/jokkmokk-table-and-4-chairs-antique-stain-50211104/&#39;</span><span class="hl-0">);</span><br/><span class="hl-4">console</span><span class="hl-0">.</span><span class="hl-1">log</span><span class="hl-0">(</span><span class="hl-4">result</span><span class="hl-0">);</span>
+</code><button>Copy</button></pre>
+<a id="md:3-demo" class="tsd-anchor"></a><h3><a href="#md:3-demo">3. Demo</a></h3><p>Here&#39;s a demo of running the scrapper in a server environment integrated with a React app</p>
 <video loop muted autoPlay playsInline width="100%" height="auto" controlsList="nodownload noremoteplayback noplaybackrate">
   <source src="https://github.com/subho57/universal-pdp-scrapper/assets/55734806/2084481f-8835-4436-98db-e136610a15a4" type="video/mp4">
 </video>
@@ -27,11 +30,11 @@
 <li><input checked="" disabled="" type="checkbox"> Supports ES6 Async/Await</li>
 <li><input checked="" disabled="" type="checkbox"> Supports CommonJS require</li>
 <li><input checked="" disabled="" type="checkbox"> Tree-shakable</li>
-<li><input checked="" disabled="" type="checkbox"> Can be used both in Node and Browser environments.</li>
+<li><input checked="" disabled="" type="checkbox"> Can be used both in Node and Browser environments</li>
 <li><input checked="" disabled="" type="checkbox"> Written in Typescript</li>
 <li><input checked="" disabled="" type="checkbox"> Uses OpenAI to extract estimated information from the product page</li>
-<li><input checked="" disabled="" type="checkbox"> Uses SerpAPI to extract images from product pages using Google Image Search</li>
-<li><input checked="" disabled="" type="checkbox"> Uses Cheerio to scrape product pages for some popular websites.</li>
+<li><input checked="" disabled="" type="checkbox"> Uses Google Custom Search JSON API to extract images from product pages using Google Image Search</li>
+<li><input checked="" disabled="" type="checkbox"> Uses Cheerio to scrape product pages for some popular websites</li>
 </ul>
 <p><strong>NOTE</strong>: This library doesn&#39;t solve the issue of CORS for images or glbs. If you encounter cors, its better to use this library in the server environment and download the images and glbs to your server and serve them from there.</p>
 <p><a href="https://npminsights.com/package/universal-pdp-scrapper"><img src="https://npminsights.com/api/package/readme-image/universal-pdp-scrapper?v=2023-02-22" alt="universal-pdp-scrapper npminsights.com"></a></p>
@@ -65,7 +68,8 @@
 <li>
 <ul>
 <li><a href="#md:1-install"><span>1. <wbr/>Install</span></a></li>
-<li><a href="#md:2-demo"><span>2. <wbr/>Demo</span></a></li></ul></li>
+<li><a href="#md:2-usage"><span>2. <wbr/>Usage</span></a></li>
+<li><a href="#md:3-demo"><span>3. <wbr/>Demo</span></a></li></ul></li>
 <li><a href="#md:features"><span>Features</span></a></li>
 <li><a href="#md:module-stats"><span>Module <wbr/>Stats</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">

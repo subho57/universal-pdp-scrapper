@@ -1,6 +1,6 @@
 {
   "name": "universal-pdp-scrapper",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A universal pdp scrapper using cheerio & ChatGPT",
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
   "source": "src/index.ts",
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
+  "unkpg": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "exports": {
     "types": "./dist/index.d.ts",
@@ -44,7 +45,7 @@
   },
   "scripts": {
     "build-types": "tsc --noEmit --pretty",
-    "build": "rimraf docs dist && microbundle && typedoc src/index.ts && cp stats.html docs && mv dist/src/* ./dist/ && rimraf dist/src",
+    "build": "rimraf docs dist && microbundle --target node --visualize && microbundle --target web --no-compress --format umd --external none && typedoc src/index.ts && cp stats.html docs && mv dist/src/* ./dist/ && rimraf dist/src",
     "start": "microbundle watch",
     "prepare": "husky install && npm i -g yarn",
     "postinstall": "husky install",
@@ -60,6 +61,7 @@
   "license": "MIT",
   "packageManager": "yarn@3.6.0",
   "dependencies": {
+    "@googleapis/customsearch": "^1.0.0",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
@@ -67,11 +69,11 @@
     "serpapi": "^1.1.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.6.5",
-    "@commitlint/config-conventional": "^17.6.5",
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
     "@types/jest": "^29.5.2",
-    "@typescript-eslint/eslint-plugin": "^5.60.0",
-    "@typescript-eslint/parser": "^5.60.0",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
     "env-cmd": "^10.1.0",
     "eslint": "^8.43.0",
     "eslint-config-airbnb-base": "^15.0.0",

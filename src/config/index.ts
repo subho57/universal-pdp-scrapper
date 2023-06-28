@@ -15,10 +15,15 @@ export default {
   },
   SERP: {
     API_KEY: process.env.SERP_API_KEY || '',
+    USE_SERP_API: process.env.USE_SERP_API === 'true',
   },
   OPEN_AI: {
     API_KEY: process.env.OPEN_AI_SECRET_KEY ?? '',
     ORG_ID: process.env.OPEN_AI_ORG_ID || undefined,
-    MODEL: process.env.OPEN_AI_MODEL || 'gpt-3.5-turbo',
+    MODEL: process.env.OPEN_AI_MODEL || 'gpt-3.5-turbo-0301',
+  },
+  GOOGLE: {
+    API_KEY: process.env.GOOGLE_API_KEY || '',
+    CSE_ID: process.env.GOOGLE_CSE_ID || '',
   },
 };

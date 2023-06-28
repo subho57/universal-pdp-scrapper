@@ -22,6 +22,8 @@ glb_to_use?: string;
 'supporting-surface'?: 'floor' | 'wall';
 ```
 
+Under the hood, it uses OpenAI to extract estimated information from the product page and Google Custom Search JSON API / SerpAPI to extract images from product pages using Google Image Search coupled with Ikea's product search API and some custom scrappers for some popular furniture websites.
+
 ## How to use
 
 ### 1. Install
@@ -30,7 +32,25 @@ glb_to_use?: string;
 npm i universal-pdp-scrapper
 ```
 
-### 2. Demo
+### 2. Usage
+
+```typescript
+import { UniversalPDPScrapper } from 'universal-pdp-scrapper';
+
+// Initialize the client and set the API keys
+// You can set API Keys using environment variables as well: check [.env.sample](./.env.sample)
+const client = new UniversalPDPScrapper({
+    openaiApiKey: '',
+    openaiOrgId: '',
+    openaiModelId: '',
+    googleApiKey: '',
+    googleCseId: ''
+});
+const result = await client.scrape('https://www.ikea.com/us/en/p/jokkmokk-table-and-4-chairs-antique-stain-50211104/');
+console.log(result);
+```
+
+### 3. Demo
 
 Here's a demo of running the scrapper in a server environment integrated with a React app
 
@@ -43,11 +63,11 @@ Here's a demo of running the scrapper in a server environment integrated with a 
 - [x] Supports ES6 Async/Await
 - [x] Supports CommonJS require
 - [x] Tree-shakable
-- [x] Can be used both in Node and Browser environments.
+- [x] Can be used both in Node and Browser environments
 - [x] Written in Typescript
 - [x] Uses OpenAI to extract estimated information from the product page
-- [x] Uses SerpAPI to extract images from product pages using Google Image Search
-- [x] Uses Cheerio to scrape product pages for some popular websites.
+- [x] Uses Google Custom Search JSON API to extract images from product pages using Google Image Search
+- [x] Uses Cheerio to scrape product pages for some popular websites
 
 **NOTE**: This library doesn't solve the issue of CORS for images or glbs. If you encounter cors, its better to use this library in the server environment and download the images and glbs to your server and serve them from there.
 

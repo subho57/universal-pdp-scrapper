@@ -27,6 +27,7 @@ export enum Types {
   TABLE_LAMP = 'table_lamp',
   TOY = 'toy',
   TV_STAND = 'tv_stand',
+  WALL_MIRROR = 'wall_mirror',
   WALL_LAMP = 'wall_lamp',
   WALL_SHELF = 'wall_shelf',
 }
