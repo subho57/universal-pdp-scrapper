@@ -1,6 +1,6 @@
 # Universal PDP Scrapper
 
-[![NPM](https://img.shields.io/npm/v/universal-pdp-scrapper.svg)](https://www.npmjs.com/package/universal-pdp-scrapper) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/universal-pdp-scrapper.svg)](https://www.npmjs.com/package/universal-pdp-scrapper) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![pages-build-deployment](https://github.com/subho57/universal-pdp-scrapper/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/subho57/universal-pdp-scrapper/actions/workflows/pages/pages-build-deployment)
 
 This is a universal PDP scrapper that can scrape any product detail page and extract the following information:
 
@@ -57,6 +57,10 @@ Here's a demo of running the scrapper in a server environment integrated with a 
 <video loop muted autoPlay playsInline width="100%" height="auto" controlsList="nodownload noremoteplayback noplaybackrate">
   <source src="https://github.com/subho57/universal-pdp-scrapper/assets/55734806/2084481f-8835-4436-98db-e136610a15a4" type="video/mp4">
 </video>
+
+### 4. Documentation
+
+Check [here](./docs).
 
 ## Features
 
