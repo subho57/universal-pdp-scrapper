@@ -27,7 +27,7 @@ jobs:
       - name: Install yarn
         run: npm i --location=global yarn
       - name: Install dependencies
-        run: yarn
+        run: yarn install
       - name: Run tests
         run: yarn test
 
@@ -52,6 +52,6 @@ jobs:
       - name: Install yarn
         run: npm i --location=global yarn
       - name: Install dependencies
-        run: yarn
+        run: yarn install
       - name: Run lint
         run: yarn lint
