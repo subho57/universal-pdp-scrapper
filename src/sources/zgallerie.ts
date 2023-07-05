@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
-export default class Zgallerie {
+export class Zgallerie {
   readonly url: string;
 
   constructor(url: string) {

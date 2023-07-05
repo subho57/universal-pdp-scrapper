@@ -4,7 +4,7 @@ import { load } from 'cheerio';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
-export default class Etsy {
+export class Etsy {
   readonly url: string;
 
   constructor(url: string) {

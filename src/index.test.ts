@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { UniversalPDPScrapper } from './index';
 
 describe('UniversalPDPScrapper', () => {

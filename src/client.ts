@@ -1,101 +1,193 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
+import type { OpenAIApi } from 'openai';
 
-import Logger from './providers/log';
-import Article from './sources/article';
-import Etsy from './sources/etsy';
-import Fineartamerica from './sources/fineartamerica';
-import Google from './sources/google';
-import Ikea from './sources/ikea';
-import Potterybarn from './sources/potterybarn';
-import Rugsdotcom from './sources/rugsdotcom';
-import Wayfair from './sources/wayfair';
-import Westelm from './sources/westelm';
-import Zgallerie from './sources/zgallerie';
+import CONFIG from './config';
+import { getClient, getCompletion } from './modules/openai';
+import { Logger } from './providers/log';
+import { Article } from './sources/article';
+import { Etsy } from './sources/etsy';
+import { Fineartamerica } from './sources/fineartamerica';
+import { Google } from './sources/google';
+import { Ikea } from './sources/ikea';
+import { Rugsdotcom } from './sources/rugsdotcom';
+import { Zgallerie } from './sources/zgallerie';
+import type { ScrapperOutput } from './types/scrapperOutput';
+import { Types } from './types/scrapperOutput';
+import { capitalize, removeNullsAndUndefine } from './utils';
 
 const logger = new Logger('ScrapperClient');
 
-export default class Scrapper {
-  static Article = Article;
+const determineType = (searchString: string) => {
+  try {
+    const allTags = capitalize(searchString).toLocaleLowerCase();
+    const allModelTypes = Object.values(Types);
+    const determinedType = allModelTypes.find((type) => {
+      const typeTags = type.toLocaleLowerCase().split('_');
+      return typeTags.some((tag) => allTags.includes(tag));
+    });
+    return determinedType as Types | undefined;
+  } catch (err) {
+    logger.error('determineType', (err as any).message);
+    return undefined;
+  }
+};
 
-  static Etsy = Etsy;
+const isAnImage = (html: string): boolean => {
+  return !html.includes('<html');
+};
 
-  static Fineartamerica = Fineartamerica;
+const getRawData = async (url: string) => {
+  try {
+    // @ts-ignore
+    let { data: html } = await axios.get<string>(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+        Accept: '*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+    });
+    if (typeof html !== 'string') {
+      html = JSON.stringify(html);
+    }
+    if (isAnImage(html)) {
+      return {
+        images: [url],
+        product_url: url,
+        product_name: url.split('/').pop()?.split('.').shift(),
+        source: 'user-sourced',
+      };
+    }
+    if (url.includes('article')) {
+      return await new Article(url).extract(html);
+    }
+    if (url.includes('etsy')) {
+      return await new Etsy(url).extract(html);
+    }
+    if (url.includes('fineartamerica')) {
+      return await new Fineartamerica(url).extract(html);
+    }
+    if (url.includes('ikea')) {
+      return await new Ikea(url).extract(html);
+    }
+    // if (url.includes('potterybarn')) {
+    //   return await new Potterybarn(url).extract(html);
+    // }
+    if (url.includes('https://rugs.com')) {
+      return await new Rugsdotcom(url).extract(html);
+    }
+    // if (url.includes('westelm')) {
+    //   return await new Westelm(url).extract(html);
+    // }
+    if (url.includes('zgallerie')) {
+      return await new Zgallerie(url).extract(html);
+    }
+    return await new Google({
+      url,
+      serpApiKey: CONFIG.SERP.API_KEY,
+      googleApiKey: CONFIG.GOOGLE.API_KEY,
+      googleCseId: CONFIG.GOOGLE.CSE_ID,
+    }).extract(html);
+  } catch (error) {
+    logger.error('scrape', (error as any).message);
+    return null;
+  }
+};
 
-  static Google = Google;
+export class UniversalPDPScrapper {
+  private readonly openAiClient: OpenAIApi;
 
-  static Ikea = Ikea;
+  constructor(
+    config?: (
+      | {
+          serpApiKey?: string;
+        }
+      | {
+          googleApiKey?: string;
+          googleCseId?: string;
+        }
+    ) & {
+      openaiApiKey?: string;
+      openaiOrgId?: string;
+      openaiModelId?: string;
+    }
+  ) {
+    if (config?.openaiApiKey) {
+      CONFIG.OPEN_AI.API_KEY = config.openaiApiKey;
+    }
+    if (config?.openaiOrgId) {
+      CONFIG.OPEN_AI.ORG_ID = config.openaiOrgId;
+    }
+    if (config?.openaiModelId) {
+      CONFIG.OPEN_AI.MODEL = config.openaiModelId;
+    }
+    if (config && 'serpApiKey' in config && config.serpApiKey) {
+      CONFIG.SERP.API_KEY = config.serpApiKey;
+    }
+    if (config && 'googleApiKey' in config && config.googleApiKey) {
+      CONFIG.GOOGLE.API_KEY = config.googleApiKey;
+    }
+    if (config && 'googleCseId' in config && config.googleCseId) {
+      CONFIG.GOOGLE.CSE_ID = config.googleCseId;
+    }
 
-  static Potterybarn = Potterybarn;
-
-  static Rugsdotcom = Rugsdotcom;
-
-  static Wayfair = Wayfair;
-
-  static Westelm = Westelm;
-
-  static Zgallerie = Zgallerie;
-
-  static isAnImage(html: string): boolean {
-    return !html.includes('<html');
+    this.openAiClient = getClient({
+      apiKey: CONFIG.OPEN_AI.API_KEY,
+      organization: CONFIG.OPEN_AI.ORG_ID,
+    });
   }
 
-  static async scrape(url: string) {
+  scrape = async (url: string) => {
     try {
-      // @ts-ignore
-      let { data: html } = await axios.get<string>(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-          Accept: '*/*',
-          'Accept-Encoding': 'gzip, deflate, br',
-          Connection: 'keep-alive',
-        },
-      });
-      if (typeof html !== 'string') {
-        html = JSON.stringify(html);
+      const [partialScrapperOutput, openAiOutput] = await Promise.all([
+        getRawData(url),
+        getCompletion(
+          `Consider this url: ${url} and extract the following information: product name, product url, type(One of ${Object.values(
+            Types
+          ).join(
+            ','
+          )}), price(whatever currency converted to us dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json like this: { product_name, product_url, type, price, height, width, depth }`,
+          this.openAiClient,
+          CONFIG.OPEN_AI.MODEL
+        ),
+      ]);
+      removeNullsAndUndefine(partialScrapperOutput ?? {});
+      const scrapperOutput = {
+        ...(openAiOutput ? JSON.parse(openAiOutput) : {}),
+        ...partialScrapperOutput,
+      } as ScrapperOutput;
+      if (!scrapperOutput) {
+        throw new Error('Scrapper failed');
       }
-      if (this.isAnImage(html)) {
-        return {
-          images: [url],
-          product_url: url,
-          product_name: url.split('/').pop()?.split('.').shift(),
-          source: 'user-sourced',
-        };
+      if (scrapperOutput.price) {
+        scrapperOutput.price = Number(scrapperOutput.price.replace(/[^\d.]/g, '')).toFixed(2);
       }
-      if (url.includes('article')) {
-        return await new this.Article(url).extract(html);
+      if (scrapperOutput.height) {
+        scrapperOutput.height = Number(scrapperOutput.height.replace(/[^\d.]/g, '')).toFixed(2);
       }
-      if (url.includes('etsy')) {
-        return await new this.Etsy(url).extract(html);
+      if (scrapperOutput.width) {
+        scrapperOutput.width = Number(scrapperOutput.width.replace(/[^\d.]/g, '')).toFixed(2);
       }
-      if (url.includes('fineartamerica')) {
-        return await new this.Fineartamerica(url).extract(html);
+      if (scrapperOutput.depth) {
+        scrapperOutput.depth = Number(scrapperOutput.depth.replace(/[^\d.]/g, '')).toFixed(2);
       }
-      if (url.includes('ikea')) {
-        return await new this.Ikea(url).extract(html);
+      if (!scrapperOutput.type) {
+        scrapperOutput.type = determineType(`${scrapperOutput.product_name} ${scrapperOutput.product_url}`) ?? Types.PAINTING;
       }
-      // if (url.includes('potterybarn')) {
-      //   return await new this.Potterybarn(url).extract(html);
-      // }
-      if (url.includes('https://rugs.com')) {
-        return await new this.Rugsdotcom(url).extract(html);
+      if (scrapperOutput.glbs) {
+        scrapperOutput.glb_to_use = scrapperOutput.glbs.pop();
+        delete scrapperOutput.glbs;
       }
-      // if (url.includes('westelm')) {
-      //   return await new this.Westelm(url).extract(html);
-      // }
-      if (url.includes('zgallerie')) {
-        return await new this.Zgallerie(url).extract(html);
-      }
-      return await new this.Google(url).extract(html);
-    } catch (error) {
-      logger.error('scrape', (error as any).message);
+      scrapperOutput['supporting-surface'] =
+        scrapperOutput.type === Types.PAINTING || scrapperOutput.type.includes('wall_') ? 'wall' : 'floor';
+      logger.info('scrape', scrapperOutput);
+      scrapperOutput.images = scrapperOutput.images?.slice(0, 5) ?? [];
+      return scrapperOutput;
+    } catch (err) {
+      logger.error('scrape', (err as any).message);
       return null;
     }
-  }
-
-  static scrapeAll(urls: string[]) {
-    const promises = urls.map((url) => this.scrape(url));
-    return Promise.all(promises);
-  }
+  };
 }

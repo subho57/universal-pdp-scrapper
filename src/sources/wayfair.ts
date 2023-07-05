@@ -4,7 +4,7 @@ import { load } from 'cheerio';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
-export default class Wayfair {
+export class Wayfair {
   readonly url: string;
 
   constructor(url: string) {

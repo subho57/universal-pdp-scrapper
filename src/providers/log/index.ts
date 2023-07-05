@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-export default class Logger {
+export class Logger {
   constructor(private readonly name: string) {}
 
   info(message: string, ...args: any) {

@@ -12,7 +12,7 @@ export enum Types {
   FUTON = 'futon',
   LOVESEAT = 'loveseat',
   MATTRESS = 'mattress',
-  MIRROR = 'mirror',
+  // MIRROR = 'mirror',
   NIGHTSTAND = 'nightstand',
   PAINTING = 'painting',
   PLANT_STAND = 'plant_stand',

@@ -4,18 +4,41 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import { getJson } from 'serpapi';
 
-import CONFIG from '../config';
-import Logger from '../providers/log';
+import { Logger } from '../providers/log';
 import type { ScrapperOutput } from '../types/scrapperOutput';
 import { capitalize } from '../utils';
 
 const logger = new Logger('googleScrapper');
 
-export default class Google {
-  readonly url: string;
+export class Google {
+  serpApiKey?: string;
 
-  constructor(url: string) {
-    this.url = url;
+  googleApiKey: string = '';
+
+  googleCseId: string = '';
+
+  url: string;
+
+  constructor(
+    config: {
+      url: string;
+    } & (
+      | {
+          serpApiKey: string;
+        }
+      | {
+          googleApiKey: string;
+          googleCseId: string;
+        }
+    )
+  ) {
+    this.url = config.url;
+    if ('serpApiKey' in config) {
+      this.serpApiKey = config.serpApiKey;
+    } else {
+      this.googleApiKey = config.googleApiKey;
+      this.googleCseId = config.googleCseId;
+    }
   }
 
   async extract(html?: string) {
@@ -56,9 +79,9 @@ export default class Google {
         .join(' ')
         .trim();
       const processedTitle = Array.from(new Set(`${title} from ${domain}`.toLowerCase().split(' '))).join(' ');
-      const results: any = CONFIG.SERP.USE_SERP_API
+      const results: any = this.serpApiKey
         ? await getJson('google', {
-            api_key: CONFIG.SERP.API_KEY,
+            api_key: this.serpApiKey,
             q: processedTitle,
             gl: 'us',
             hl: 'en',
@@ -69,10 +92,10 @@ export default class Google {
           })
         : await customsearch('v1').cse.list(
             {
-              auth: CONFIG.GOOGLE.API_KEY,
+              auth: this.googleApiKey,
               q: processedTitle, // .replace(/\s+/g, '+'),
               cr: 'countryUS',
-              cx: CONFIG.GOOGLE.CSE_ID,
+              cx: this.googleCseId,
               gl: 'us',
               hl: 'en',
               // lr: 'lang_en',
@@ -86,7 +109,7 @@ export default class Google {
             }
           );
       const res: ScrapperOutput = {
-        images: CONFIG.SERP.USE_SERP_API
+        images: this.serpApiKey
           ? (results.images_results.slice(0, 3) ?? []).map((image: any) => image.original)
           : results.data.items?.map((item: any) => item.link!) ?? [],
         product_name: capitalize(title),

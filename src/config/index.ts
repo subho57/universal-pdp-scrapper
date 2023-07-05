@@ -15,7 +15,6 @@ export default {
   },
   SERP: {
     API_KEY: process.env.SERP_API_KEY || '',
-    USE_SERP_API: process.env.USE_SERP_API === 'true',
   },
   OPEN_AI: {
     API_KEY: process.env.OPEN_AI_SECRET_KEY ?? '',

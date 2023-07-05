@@ -24,12 +24,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Update NPM
         run: npm i -g npm
-      - name: Install yarn
-        run: npm i --location=global yarn
+      # - name: Install yarn
+      #   run: npm i --location=global yarn
       - name: Install dependencies
-        run: yarn install
+        run: npm install
       - name: Run tests
-        run: yarn test
+        run: npm test
 
   lint-check:
     name: Lint Check
@@ -49,9 +49,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Update NPM
         run: npm i -g npm
-      - name: Install yarn
-        run: npm i --location=global yarn
+      # - name: Install yarn
+      #   run: npm i --location=global yarn
       - name: Install dependencies
-        run: yarn install
+        run: npm install
       - name: Run lint
-        run: yarn lint
+        run: npm lint
