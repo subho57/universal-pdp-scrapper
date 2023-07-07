@@ -41,6 +41,49 @@ export class Google {
     }
   }
 
+  async getImages(prompt: string, useSerpApi?: boolean): Promise<string[]> {
+    const results: Record<string, any> | undefined = useSerpApi
+      ? await getJson('google', {
+          api_key: this.serpApiKey,
+          q: prompt,
+          gl: 'us',
+          hl: 'en',
+          tbm: 'isch',
+          filter: '1',
+          google_domain: 'google.com',
+          location: 'California, United States',
+        }).catch((err) => {
+          logger.error('getImages.usingSerpApi', err);
+          return undefined;
+        })
+      : await customsearch('v1')
+          .cse.list(
+            {
+              auth: this.googleApiKey,
+              q: prompt, // .replace(/\s+/g, '+'),
+              cr: 'countryUS',
+              cx: this.googleCseId,
+              gl: 'us',
+              hl: 'en',
+              // lr: 'lang_en',
+              filter: '1',
+              num: 5,
+              safe: 'active',
+              searchType: 'image',
+            },
+            {
+              http2: true,
+            }
+          )
+          .catch((err) => {
+            logger.error('getImages.usingGoogleApi', err);
+            return undefined;
+          });
+    return useSerpApi
+      ? (results?.images_results.slice(0, 3) ?? []).map((image: any) => image.original)
+      : results?.data.items?.map((item: any) => item.link!) ?? [];
+  }
+
   async extract(html?: string) {
     try {
       if (!html) {
@@ -79,39 +122,13 @@ export class Google {
         .join(' ')
         .trim();
       const processedTitle = Array.from(new Set(`${title} from ${domain}`.toLowerCase().split(' '))).join(' ');
-      const results: any = this.serpApiKey
-        ? await getJson('google', {
-            api_key: this.serpApiKey,
-            q: processedTitle,
-            gl: 'us',
-            hl: 'en',
-            tbm: 'isch',
-            filter: '1',
-            google_domain: 'google.com',
-            location: 'California, United States',
-          })
-        : await customsearch('v1').cse.list(
-            {
-              auth: this.googleApiKey,
-              q: processedTitle, // .replace(/\s+/g, '+'),
-              cr: 'countryUS',
-              cx: this.googleCseId,
-              gl: 'us',
-              hl: 'en',
-              // lr: 'lang_en',
-              filter: '1',
-              num: 5,
-              // safe: 'high',
-              searchType: 'image',
-            },
-            {
-              http2: true,
-            }
-          );
+      const images = await this.getImages(processedTitle, !!this.serpApiKey);
+      if (!images.length && this.serpApiKey && this.googleApiKey && this.googleCseId) {
+        logger.warn('No images found, trying without serp api');
+        images.push(...(await this.getImages(processedTitle, false)));
+      }
       const res: ScrapperOutput = {
-        images: this.serpApiKey
-          ? (results.images_results.slice(0, 3) ?? []).map((image: any) => image.original)
-          : results.data.items?.map((item: any) => item.link!) ?? [],
+        images,
         product_name: capitalize(title),
         source: domainParts.at(-2),
         product_url: this.url,
