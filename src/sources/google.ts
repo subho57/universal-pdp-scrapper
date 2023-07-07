@@ -87,7 +87,10 @@ export class Google {
   async extract(html?: string) {
     try {
       if (!html) {
-        const response = await axios.get(this.url);
+        const response = await axios.get(this.url).catch((err) => {
+          logger.error('extract.axios.get', err.message, err.response);
+          return { data: '<html><head><title></title></head></html>' };
+        });
         html = response.data;
       }
       const parsedURL = new URL(this.url);

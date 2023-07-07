@@ -22,7 +22,7 @@ export class Fineartamerica {
     const $ = load(html!);
     const res: ScrapperOutput = {
       product_name: $('#h1title').text().trim(),
-      images: [$('#productPreviewImage').attr('src')?.trim() ?? ''],
+      images: [$('#productPreviewImage').attr('src')?.trim() ?? $('#mainimage').attr('src')?.trim()].filter((x) => !!x) as string[],
       material: $('#priceDetailDiv > div:nth-child(2) > p:nth-child(2)').text().trim(),
       price: `${$('#productCurrency').text().trim()} ${$('#productPrice').text().trim()}`,
       artist: $('#artistName > a').text().trim(),

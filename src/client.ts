@@ -41,14 +41,19 @@ const isAnImage = (html: string): boolean => {
 const getRawData = async (url: string) => {
   try {
     // @ts-ignore
-    let { data: html } = await axios.get<string>(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-        Accept: '*/*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        Connection: 'keep-alive',
-      },
-    });
+    let { data: html } = await axios
+      .get<string>(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+          Accept: '*/*',
+          'Accept-Encoding': 'gzip, deflate, br',
+          Connection: 'keep-alive',
+        },
+      })
+      .catch((err) => {
+        logger.error('getRawData.axios.get', err.message, err.response);
+        return { data: '<html><head><title></title></head></html>' };
+      });
     if (typeof html !== 'string') {
       html = JSON.stringify(html);
     }
@@ -60,38 +65,69 @@ const getRawData = async (url: string) => {
         source: 'user-sourced',
       };
     }
+    const googleClient = new Google({
+      url,
+      serpApiKey: CONFIG.SERP.API_KEY,
+      googleApiKey: CONFIG.GOOGLE.API_KEY,
+      googleCseId: CONFIG.GOOGLE.CSE_ID,
+    });
     if (url.includes('article')) {
-      return await new Article(url).extract(html);
+      return await new Article(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
+        };
+      });
     }
     if (url.includes('etsy')) {
-      return await new Etsy(url).extract(html);
+      return await new Etsy(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
+        };
+      });
     }
     if (url.includes('fineartamerica')) {
-      return await new Fineartamerica(url).extract(html);
+      return await new Fineartamerica(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
+        };
+      });
     }
     if (url.includes('ikea')) {
-      return await new Ikea(url).extract(html);
+      return await new Ikea(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
+        };
+      });
     }
     // if (url.includes('potterybarn')) {
     //   return await new Potterybarn(url).extract(html);
     // }
     if (url.includes('https://rugs.com')) {
-      return await new Rugsdotcom(url).extract(html);
+      return await new Rugsdotcom(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
+        };
+      });
     }
     // if (url.includes('westelm')) {
     //   return await new Westelm(url).extract(html);
     // }
     if (url.includes('zgallerie')) {
-      return await new Zgallerie(url).extract(html);
+      return await new Zgallerie(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
+        };
+      });
     }
-    return await new Google({
-      url,
-      serpApiKey: CONFIG.SERP.API_KEY,
-      googleApiKey: CONFIG.GOOGLE.API_KEY,
-      googleCseId: CONFIG.GOOGLE.CSE_ID,
-    }).extract(html);
+    return await googleClient.extract(html);
   } catch (error) {
-    logger.error('scrape', (error as any).message);
+    logger.error('getRawData', (error as any).message);
     return null;
   }
 };
@@ -154,9 +190,11 @@ export class UniversalPDPScrapper {
         ),
       ]);
       removeNullsAndUndefine(partialScrapperOutput ?? {});
+      const parseOpenAiOutput = openAiOutput ? JSON.parse(openAiOutput) : {};
       const scrapperOutput = {
-        ...(openAiOutput ? JSON.parse(openAiOutput) : {}),
+        ...parseOpenAiOutput,
         ...partialScrapperOutput,
+        product_name: parseOpenAiOutput.product_name || partialScrapperOutput?.product_name,
       } as ScrapperOutput;
       if (!scrapperOutput) {
         throw new Error('Scrapper failed');
