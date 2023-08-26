@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-import type { OpenAIApi } from 'openai';
+import type { OpenAI } from 'openai';
 
 import CONFIG from './config';
 import { getClient, getCompletion } from './modules/openai';
@@ -133,7 +133,7 @@ const getRawData = async (url: string) => {
 };
 
 export class UniversalPDPScrapper {
-  private readonly openAiClient: OpenAIApi;
+  private readonly openAiClient: OpenAI;
 
   constructor(
     config?: (
@@ -215,7 +215,7 @@ export class UniversalPDPScrapper {
         scrapperOutput.type = determineType(`${scrapperOutput.product_name} ${scrapperOutput.product_url}`) ?? Types.PAINTING;
       }
       if (scrapperOutput.glbs) {
-        scrapperOutput.glb_to_use = scrapperOutput.glbs.pop();
+        scrapperOutput.glb_to_use = scrapperOutput.glbs.find((glb) => glb.includes('.glb')) ?? scrapperOutput.glbs[0];
         delete scrapperOutput.glbs;
       }
       scrapperOutput['supporting-surface'] =
