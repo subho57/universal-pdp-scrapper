@@ -26,7 +26,7 @@ export class Etsy {
         .replace(/[\r\n]/gm, '')
         .trim(),
       images: $(
-        '#listing-right-column > div > div.body-wrap.wt-body-max-width.wt-display-flex-md.wt-flex-direction-column-xs > div.image-col.wt-order-xs-1.wt-mb-lg-6 > div > div > div.image-wrapper.wt-position-relative.carousel-container-responsive > div > div.image-carousel-container.wt-position-relative.wt-flex-xs-6.wt-order-xs-2.show-scrollable-thumbnails > ul > li > img'
+        '#listing-right-column > div > div.body-wrap.wt-body-max-width.wt-display-flex-md.wt-flex-direction-column-xs > div.image-col.wt-order-xs-1.wt-mb-lg-6 > div > div > div.image-wrapper.wt-position-relative.carousel-container-responsive > div > div.image-carousel-container.wt-position-relative.wt-flex-xs-6.wt-order-xs-2.show-scrollable-thumbnails > ul > li > img',
       )
         .map((_i, el) => $(el).attr('data-src-zoom-image'))
         .get(),
@@ -50,14 +50,14 @@ export class Etsy {
         ?.replace(/\D+/g, ''),
       material: $('#legacy-materials-product-details').text()?.split(':').pop()?.trim(),
       price: $(
-        '#listing-page-cart > div.wt-mb-xs-6.wt-mb-lg-0 > div:nth-child(1) > div.wt-mb-xs-3 > div.wt-mb-xs-3 > div.wt-display-flex-xs.wt-align-items-center.wt-justify-content-space-between > div.wt-display-flex-xs.wt-align-items-center > p > span:nth-child(2)'
+        '#listing-page-cart > div.wt-mb-xs-6.wt-mb-lg-0 > div:nth-child(1) > div.wt-mb-xs-3 > div.wt-mb-xs-3 > div.wt-display-flex-xs.wt-align-items-center.wt-justify-content-space-between > div.wt-display-flex-xs.wt-align-items-center > p > span:nth-child(2)',
       )
         .text()
         .replace(/[\r\n]/gm, '')
         .trim(),
       sku: this.url.split('/')[this.url.split('/').length - 2],
       artist: $(
-        '#desktop_shop_owners_parent > div > div > div.wt-display-flex-xs.wt-align-items-center.wt-mb-xs-2 > div:nth-child(2) > p.wt-text-body-03.wt-line-height-tight.wt-mb-xs-1'
+        '#desktop_shop_owners_parent > div > div > div.wt-display-flex-xs.wt-align-items-center.wt-mb-xs-2 > div:nth-child(2) > p.wt-text-body-03.wt-line-height-tight.wt-mb-xs-1',
       )
         .text()
         .trim(),

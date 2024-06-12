@@ -165,14 +165,14 @@ export class Ikea {
             return p.value;
           }
           return null;
-        }) as [IkeaProduct | null, IkeaModel | null]
+        }) as [IkeaProduct | null, IkeaModel | null],
     );
     let res: ScrapperOutput = {};
     if (!productDetails || Object.keys(productDetails).length === 0) {
       const $ = load(html!);
       res = {
         product_name: $(
-          '#pip-buy-module-content > div.pip-temp-price-module.pip-temp-price-module--informational.pip-temp-price-module--small.pip-temp-price-module--regular-price-package > div.pip-temp-price-module__information > div > h1 > span.pip-header-section__title--big.notranslate'
+          '#pip-buy-module-content > div.pip-temp-price-module.pip-temp-price-module--informational.pip-temp-price-module--small.pip-temp-price-module--regular-price-package > div.pip-temp-price-module__information > div > h1 > span.pip-header-section__title--big.notranslate',
         )
           .text()
           .replace(/[\r\n]/gm, '')
@@ -181,7 +181,7 @@ export class Ikea {
           .map((_i, el) => $(el).attr('src'))
           .get(),
         depth: $(
-          '#range-modal-mount-node > div > div:nth-child(3) > div > div.pip-sheets__content-wrapper > div > div > div > div.pip-product-dimensions__dimensions-container > p'
+          '#range-modal-mount-node > div > div:nth-child(3) > div > div.pip-sheets__content-wrapper > div > div > div > div.pip-product-dimensions__dimensions-container > p',
         )
           .filter((_i, el) => !!$(el).html()?.includes('Length'))
           .text()
@@ -189,7 +189,7 @@ export class Ikea {
           ?.trim()
           ?.replace(/\D+/g, ''),
         width: $(
-          '#range-modal-mount-node > div > div:nth-child(3) > div > div.pip-sheets__content-wrapper > div > div > div > div.pip-product-dimensions__dimensions-container > p'
+          '#range-modal-mount-node > div > div:nth-child(3) > div > div.pip-sheets__content-wrapper > div > div > div > div.pip-product-dimensions__dimensions-container > p',
         )
           .filter((_i, el) => !!$(el).html()?.includes('Width'))
           .text()
@@ -197,7 +197,7 @@ export class Ikea {
           ?.trim()
           ?.replace(/\D+/g, ''),
         height: $(
-          '#range-modal-mount-node > div > div:nth-child(3) > div > div.pip-sheets__content-wrapper > div > div > div > div.pip-product-dimensions__dimensions-container > p'
+          '#range-modal-mount-node > div > div:nth-child(3) > div > div.pip-sheets__content-wrapper > div > div > div > div.pip-product-dimensions__dimensions-container > p',
         )
           .filter((_i, el) => !!$(el).html()?.includes('height'))
           .text()
@@ -205,7 +205,7 @@ export class Ikea {
           ?.trim()
           ?.replace(/\D+/g, ''),
         price: $(
-          '#pip-buy-module-content > div.pip-temp-price-module.pip-temp-price-module--informational.pip-temp-price-module--small.pip-temp-price-module--regular-price-package > div.pip-temp-price-module__price > div > span > span:nth-child(1) > span.pip-temp-price__integer'
+          '#pip-buy-module-content > div.pip-temp-price-module.pip-temp-price-module--informational.pip-temp-price-module--small.pip-temp-price-module--regular-price-package > div.pip-temp-price-module__price > div > span > span:nth-child(1) > span.pip-temp-price__integer',
         )
           .text()
           .replace(/[\r\n]/gm, '')

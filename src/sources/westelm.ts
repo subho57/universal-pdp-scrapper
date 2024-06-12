@@ -32,7 +32,7 @@ export class Westelm {
       width: dimension?.split('x')[0]?.trim()?.replace('&quot;w', ''),
       height: dimension?.split('x')[2]?.trim()?.replace('&quot;h', ''),
       price: $(
-        '#pip-river-container-WE > div > div > div.product-details > div > div.line-through.price-under-title > ul > li > span.amount'
+        '#pip-river-container-WE > div > div > div.product-details > div > div.line-through.price-under-title > ul > li > span.amount',
       )
         .text()
         .replace(/[\r\n]/gm, '')

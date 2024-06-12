@@ -30,7 +30,7 @@ export class Google {
           googleApiKey: string;
           googleCseId: string;
         }
-    )
+    ),
   ) {
     this.url = config.url;
     if ('serpApiKey' in config) {
@@ -73,7 +73,7 @@ export class Google {
             },
             {
               http2: true,
-            }
+            },
           )
           .catch((err) => {
             logger.error('getImages.usingGoogleApi', err);
@@ -120,7 +120,7 @@ export class Google {
               word.includes('&') ||
               word.includes('|') ||
               word.includes('=')
-            )
+            ),
         )
         .join(' ')
         .trim();

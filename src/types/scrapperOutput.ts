@@ -30,6 +30,14 @@ export enum Types {
   WALL_MIRROR = 'wall_mirror',
   WALL_LAMP = 'wall_lamp',
   WALL_SHELF = 'wall_shelf',
+  VANITY = 'vanity',
+  FAUCET = 'faucet',
+  SINK = 'sink',
+  WATER_CLOSET = 'water_closet',
+  BATHTUB = 'bathtub',
+  LIGHT = 'light',
+  MIRROR = 'mirror',
+  CABINET = 'cabinet',
 }
 
 export interface ScrapperOutput {
@@ -47,5 +55,7 @@ export interface ScrapperOutput {
   source?: string;
   glbs?: string[];
   glb_to_use?: string;
+  description?: string;
+  tags?: string;
   'supporting-surface'?: 'floor' | 'wall';
 }

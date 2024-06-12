@@ -1,6 +1,7 @@
 export * from './client';
 export * from './modules/openai';
 export * from './sources/article';
+export * from './sources/builddotcom';
 export * from './sources/etsy';
 export * from './sources/fineartamerica';
 export * from './sources/google';

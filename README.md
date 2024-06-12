@@ -1,8 +1,8 @@
-# Universal PDP Scrapper
+# Universal PDP Scrapper - An AI-based Scrapper library for scraping product detail pages
 
 [![NPM](https://img.shields.io/npm/v/universal-pdp-scrapper.svg)](https://www.npmjs.com/package/universal-pdp-scrapper) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![pages-build-deployment](https://github.com/subho57/universal-pdp-scrapper/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/subho57/universal-pdp-scrapper/actions/workflows/pages/pages-build-deployment)
 
-This is a universal PDP scrapper that can scrape any product detail page and extract the following information:
+This is a universal PDP scrapper that can scrape any product detail page and extract the following information using ai and custom logic:
 
 ```json
 product_name?: string;
@@ -19,6 +19,8 @@ product_url?: string;
 source?: string;
 glbs?: string[];
 glb_to_use?: string;
+description?: string;
+tags?: string;
 'supporting-surface'?: 'floor' | 'wall';
 ```
 
@@ -64,14 +66,24 @@ Check [here](./docs).
 
 ## Features
 
-- [x] Supports ES6 Async/Await
-- [x] Supports CommonJS require
-- [x] Tree-shakable
-- [x] Can be used both in Node and Browser environments
-- [x] Written in Typescript
-- [x] Uses OpenAI to extract estimated information from the product page
-- [x] Uses Google Custom Search JSON API to extract images from product pages using Google Image Search
-- [x] Uses Cheerio to scrape product pages for some popular websites
+- [X] Supports ES6 Async/Await
+- [X] Supports CommonJS require
+- [X] Tree-shakable
+- [X] Can be used both in Node and Browser environments
+- [X] Written in Typescript
+- [X] Uses OpenAI to extract estimated information from the product page
+- [X] Uses Google Custom Search JSON API to extract images from product pages using Google Image Search
+- [X] Uses Cheerio to scrape custom product pages for some popular websites incl.:
+- - amazon.com
+- - build.com
+- - etsy.com
+- - fineartamerica.com
+- - ikea.com
+- - potterybarn.com
+- - rugs.com
+- - wayfair.com
+- - westelm.com
+- - zgallerie.com
 
 **NOTE**: This library doesn't solve the issue of CORS for images or glbs. If you encounter cors, its better to use this library in the server environment and download the images and glbs to your server and serve them from there.
 

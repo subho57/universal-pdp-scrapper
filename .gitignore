@@ -38,6 +38,7 @@ yarn-error.log*
 # Lock files
 package-lock.json
 yarn.lock
+bun.lockb
 
 .yarn/*
 !.yarn/cache

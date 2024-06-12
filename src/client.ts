@@ -7,6 +7,7 @@ import CONFIG from './config';
 import { getClient, getCompletion } from './modules/openai';
 import { Logger } from './providers/log';
 import { Article } from './sources/article';
+import { Builddotcom } from './sources/builddotcom';
 import { Etsy } from './sources/etsy';
 import { Fineartamerica } from './sources/fineartamerica';
 import { Google } from './sources/google';
@@ -73,6 +74,14 @@ const getRawData = async (url: string) => {
     });
     if (url.includes('article')) {
       return await new Article(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
+        };
+      });
+    }
+    if (url.includes('build.com')) {
+      return await new Builddotcom(url).extract(html).then(async (data) => {
         return {
           ...data,
           images: !data.images?.length ? await googleClient.getImages(data.product_name ?? '') : data.images,
@@ -148,7 +157,7 @@ export class UniversalPDPScrapper {
       openaiApiKey?: string;
       openaiOrgId?: string;
       openaiModelId?: string;
-    }
+    },
   ) {
     if (config?.openaiApiKey) {
       CONFIG.OPEN_AI.API_KEY = config.openaiApiKey;
@@ -180,21 +189,30 @@ export class UniversalPDPScrapper {
       const [partialScrapperOutput, openAiOutput] = await Promise.all([
         getRawData(url),
         getCompletion(
-          `Consider this url: ${url} and extract the following information: product name, product url, type(One of ${Object.values(
-            Types
+          `Consider this url: ${url} and extract the following information: product name, description (a string describing the product in one line such that, when this string is searched in google, it shows similar products), tags (a list of comma separated words relating to the product), product url, type(One of ${Object.values(
+            Types,
           ).join(
-            ','
-          )}), price(whatever currency converted to us dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json like this: { product_name, product_url, type, price, height, width, depth }`,
+            ',',
+          )}), price(whatever currency converted to us dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json schema like this: { product_name: string; product_url: string; type: string; price: string; height: string; width: string; depth: string; tags: string }`,
           this.openAiClient,
-          CONFIG.OPEN_AI.MODEL
+          CONFIG.OPEN_AI.MODEL,
         ),
       ]);
       removeNullsAndUndefine(partialScrapperOutput ?? {});
-      const parseOpenAiOutput = openAiOutput ? JSON.parse(openAiOutput) : {};
+      let parsedOpenAiOutput: Record<string, any>;
+      try {
+        parsedOpenAiOutput = openAiOutput ? JSON.parse(openAiOutput ?? '') : {};
+      } catch (error: any) {
+        logger.error(error.message, openAiOutput);
+        parsedOpenAiOutput = {};
+      }
       const scrapperOutput = {
-        ...parseOpenAiOutput,
+        ...parsedOpenAiOutput,
         ...partialScrapperOutput,
-        product_name: parseOpenAiOutput.product_name || partialScrapperOutput?.product_name,
+        product_name: partialScrapperOutput?.product_name || parsedOpenAiOutput.product_name,
+        images: [...(partialScrapperOutput?.images ?? []), ...(parsedOpenAiOutput.images ?? [])],
+        description: (partialScrapperOutput?.description ?? '').concat(parsedOpenAiOutput.description ?? ''),
+        tags: parsedOpenAiOutput.tags?.toLowerCase(),
       } as ScrapperOutput;
       if (!scrapperOutput) {
         throw new Error('Scrapper failed');
