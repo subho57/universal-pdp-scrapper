@@ -4,7 +4,7 @@
   "description": "A universal pdp scrapper using cheerio & ChatGPT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/subho57/universal-pdp-scrapper.git"
+    "url": "git+https://github.com/subho57/universal-pdp-scrapper.git"
   },
   "homepage": "https://subho57.github.io/universal-pdp-scrapper/docs/",
   "sideEffects": false,
