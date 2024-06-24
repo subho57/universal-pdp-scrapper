@@ -78,6 +78,7 @@ Check [here](./docs).
 - - build.com
 - - etsy.com
 - - fineartamerica.com
+- - homedepot.com
 - - ikea.com
 - - potterybarn.com
 - - rugs.com

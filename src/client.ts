@@ -11,6 +11,7 @@ import { Builddotcom } from './sources/builddotcom';
 import { Etsy } from './sources/etsy';
 import { Fineartamerica } from './sources/fineartamerica';
 import { Google } from './sources/google';
+import { Homedepot } from './sources/homedepot';
 import { Ikea } from './sources/ikea';
 import { Rugsdotcom } from './sources/rugsdotcom';
 import { Zgallerie } from './sources/zgallerie';
@@ -41,13 +42,18 @@ const isAnImage = (html: string): boolean => {
 
 const getRawData = async (url: string) => {
   try {
+    const parsedUrl = new URL(url);
     // @ts-ignore
     let { data: html } = await axios
       .get<string>(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-          Accept: '*/*',
+          Accept: 'application/json, text/plain, */*',
           'Accept-Encoding': 'gzip, deflate, br',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          Origin: parsedUrl.origin,
+          Host: parsedUrl.host,
           Connection: 'keep-alive',
         },
       })
@@ -126,6 +132,14 @@ const getRawData = async (url: string) => {
     // if (url.includes('westelm')) {
     //   return await new Westelm(url).extract(html);
     // }
+    if (url.includes('homedepot')) {
+      return await new Homedepot(url).extract(html).then(async (data) => {
+        return {
+          ...data,
+          images: !data.images?.length ? await googleClient.getImages(`${data.product_name ?? ''} from homedepot`) : data.images,
+        };
+      });
+    }
     if (url.includes('zgallerie')) {
       return await new Zgallerie(url).extract(html).then(async (data) => {
         return {
