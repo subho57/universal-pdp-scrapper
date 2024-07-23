@@ -207,7 +207,8 @@ export class UniversalPDPScrapper {
             Types,
           ).join(
             ',',
-          )}), price(whatever currency converted to us dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json schema like this: { product_name: string; product_url: string; type: string; price: string; height: string; width: string; depth: string; tags: string }`,
+          )}), price(whatever currency converted to us dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json schema like this: { product_name: string; product_url: string; type: string; price: string; height: string; width: string; depth: string; tags: string }
+          CRITICAL INSTRUCTION: Strictly return a json format without any plain text and without any '\`\`\`json' markdown formatting.`,
           this.openAiClient,
           CONFIG.OPEN_AI.MODEL,
         ),
@@ -215,7 +216,12 @@ export class UniversalPDPScrapper {
       removeNullsAndUndefine(partialScrapperOutput ?? {});
       let parsedOpenAiOutput: Record<string, any>;
       try {
-        parsedOpenAiOutput = openAiOutput ? JSON.parse(openAiOutput ?? '') : {};
+        let formattedOpenAiOutput = openAiOutput?.replace('```json', '').replace('```', '');
+        formattedOpenAiOutput = formattedOpenAiOutput?.substring(
+          formattedOpenAiOutput.indexOf('{'),
+          formattedOpenAiOutput.lastIndexOf('}') + 1,
+        );
+        parsedOpenAiOutput = formattedOpenAiOutput ? JSON.parse(formattedOpenAiOutput) : {};
       } catch (error: any) {
         logger.error(error.message, openAiOutput);
         parsedOpenAiOutput = {};

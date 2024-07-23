@@ -6,7 +6,7 @@ const logger = new Logger('OpenAIService');
 
 export const getClient = (config: { apiKey: string; organization?: string }) => new OpenAI(config);
 
-export const getCompletion = async (prompt: string, client: OpenAI, model = 'gpt-3.5-turbo') => {
+export const getCompletion = async (prompt: string, client: OpenAI, model = 'gpt-4o-mini') => {
   try {
     const result = await client.chat.completions.create({
       model,

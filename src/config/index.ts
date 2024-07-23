@@ -19,7 +19,7 @@ export default {
   OPEN_AI: {
     API_KEY: process.env.OPEN_AI_SECRET_KEY ?? '',
     ORG_ID: process.env.OPEN_AI_ORG_ID || undefined,
-    MODEL: process.env.OPEN_AI_MODEL || 'gpt-3.5-turbo',
+    MODEL: process.env.OPEN_AI_MODEL || 'gpt-4o-mini',
   },
   GOOGLE: {
     API_KEY: process.env.GOOGLE_API_KEY || '',
