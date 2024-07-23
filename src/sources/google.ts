@@ -81,7 +81,7 @@ export class Google {
           });
     return useSerpApi
       ? (results?.images_results.slice(0, 3) ?? []).map((image: any) => image.original)
-      : results?.data.items?.map((item: any) => item.link!) ?? [];
+      : (results?.data.items?.map((item: any) => item.link!) ?? []);
   }
 
   async extract(html?: string) {

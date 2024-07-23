@@ -58,6 +58,17 @@ describe('UniversalPDPScrapper', () => {
     expect(data?.images?.length).toBeGreaterThan(0);
   }, 100000);
 
+  it('should scrape another random product url 2', async () => {
+    const client = new UniversalPDPScrapper();
+    console.log('>>>>>>>>>>>>>>> Bedrosians.com <<<<<<<<<<<<<<<<<');
+    const data = await client.scrape(
+      'https://www.bedrosians.com/en/product/detail/slabs/granite-slabs/white-spring-slab/?itemNo=GRNWHTSPRSLAB2P&queryid=3625d43abae91d4efa8a8b1d0b136dc3',
+    );
+    expect(data).toBeDefined();
+    expect(data?.images).toBeDefined();
+    expect(data?.images?.length).toBeGreaterThan(0);
+  }, 100000);
+
   it('should scrape build.com product url', async () => {
     const client = new UniversalPDPScrapper();
     console.log('>>>>>>>>>>>>>>> Build.com <<<<<<<<<<<<<<<<<');
