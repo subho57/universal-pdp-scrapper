@@ -90,6 +90,17 @@ describe('UniversalPDPScrapper', () => {
     expect(data?.images?.length).toBeGreaterThan(0);
   }, 100000);
 
+  it('should scrape another homedepot product url', async () => {
+    const client = new UniversalPDPScrapper();
+    console.log('>>>>>>>>>>>>>>> Homedepot.com <<<<<<<<<<<<<<<<<');
+    const data = await client.scrape(
+      'https://www.homedepot.com/p/BEHR-MARQUEE-1-gal-MQ5-14-Bon-Nuit-One-Coat-Hide-Satin-Enamel-Interior-Paint-Primer-745301/205472983',
+    );
+    expect(data).toBeDefined();
+    expect(data?.images).toBeDefined();
+    expect(data?.images?.length).toBeGreaterThan(0);
+  }, 100000);
+
   it.skip('batch-eval::should scrape build.com product urls using pagination', async () => {
     const client = new UniversalPDPScrapper();
     console.log('>>>>>>>>>>>>>>> Build.com <<<<<<<<<<<<<<<<<');

@@ -239,7 +239,7 @@ export const getProductMetadata = (sourceUrl: string, html: string): ProductMeta
       height: getNumericMetaContent('product:height', 'twitter:height', ['height', 'value']),
       width: getNumericMetaContent('product:width', 'twitter:width', ['width', 'value']),
       depth: getNumericMetaContent('product:depth', 'twitter:depth', ['depth', 'value']),
-      tags: getMetaContent('article:tag', 'twitter:label', ['keywords']),
+      tags: getMetaContent('article:tag', 'twitter:label', ['keywords']) || '',
       images,
       sku: getMetaContent('product:sku', 'twitter:data1', ['sku']),
       source,
@@ -305,6 +305,8 @@ export class UniversalPDPScrapper {
         scrapeUsingAI(this.openAiClient, url, htmlContent, undefined, undefined, CONFIG.OPEN_AI.MODEL).catch(() => ({}) as ProductMetadata),
       ]);
       removeNullsAndUndefined(partialScrapperOutput ?? {});
+      removeNullsAndUndefined(parsedOpenAiOutput ?? {});
+      removeNullsAndUndefined(productMetadata ?? {});
       const scrapperOutput = {
         ...parsedOpenAiOutput,
         ...productMetadata,
@@ -331,7 +333,7 @@ export class UniversalPDPScrapper {
       if (!scrapperOutput) {
         throw new Error('Scrapper failed');
       }
-      if (!scrapperOutput.type) {
+      if (!scrapperOutput.type || scrapperOutput.type.toString() === 'product') {
         scrapperOutput.type = determineType(`${scrapperOutput.product_name} ${scrapperOutput.product_url}`) ?? Types.PAINTING;
       }
       if (scrapperOutput.glbs) {
@@ -342,6 +344,7 @@ export class UniversalPDPScrapper {
         scrapperOutput.type === Types.PAINTING || scrapperOutput.type.includes('wall_') ? 'wall' : 'floor';
       logger.info('scrape', scrapperOutput);
       scrapperOutput.images = scrapperOutput.images?.slice(0, 5) ?? [];
+      removeNullsAndUndefined(scrapperOutput);
       return scrapperOutput;
     } catch (err) {
       logger.error('scrape', (err as any).message);

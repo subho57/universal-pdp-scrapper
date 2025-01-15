@@ -111,7 +111,7 @@ export function parseJSONFromMarkdownString<T = any>(mdString: string, options: 
     return parsed as T;
   } catch (error) {
     if (options.throwOnError) {
-      throw new Error(`Failed to parse JSON: ${(error as Error).message}`);
+      throw new Error(`Failed to parse JSON: ${(error as Error).message} => ${mdString}`);
     }
     return options.defaultValue as T;
   }

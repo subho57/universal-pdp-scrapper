@@ -23,10 +23,14 @@ describe('scrapeUsingAI', () => {
       name: 'Wayfair product page',
       url: 'https://www.wayfair.com/decor-pillows/pdp/17-stories-willmetta-accent-mirror-w010982467.html',
     },
-    // {
-    //   name: 'Amazon product page',
-    //   url: 'https://www.amazon.com/Zinus-Lorelei-Platforma-Mattress-Foundation/dp/B072Q494TX/',
-    // },
+    {
+      name: 'Homedepot product page',
+      url: 'https://www.homedepot.com/p/BEHR-MARQUEE-1-gal-MQ5-14-Bon-Nuit-One-Coat-Hide-Satin-Enamel-Interior-Paint-Primer-745301/205472983',
+    },
+    {
+      name: 'Amazon product page',
+      url: 'https://www.amazon.com/Zinus-Lorelei-Platforma-Mattress-Foundation/dp/B072Q494TX/',
+    },
     {
       name: 'Lumas product page',
       url: 'https://www.lumas.com/pictures/sven_fennema/sul_lago-3/',
