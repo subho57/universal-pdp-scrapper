@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
-import axios from 'axios';
+
+import { getHtml } from '@/utils';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
@@ -15,8 +16,7 @@ export class Zgallerie {
       if (!this.url.includes('zgallerie')) {
         throw new Error('Invalid URL');
       }
-      const response = await axios.get(this.url);
-      html = response.data as string;
+      html = await getHtml(this.url);
     }
     const re = /<script id="__NEXT_DATA__" type="application\/json">(.+)<\/script>/;
     const result = html.match(re);

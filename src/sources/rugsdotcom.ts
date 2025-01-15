@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import axios from 'axios';
 import { load } from 'cheerio';
+
+import { getHtml } from '@/utils';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
@@ -16,8 +17,7 @@ export class Rugsdotcom {
       if (!this.url.includes('rugs.com')) {
         throw new Error('Invalid URL');
       }
-      const response = await axios.get(this.url);
-      html = response.data;
+      html = await getHtml(this.url);
     }
     const $ = load(html!);
     const thumbnail = $('#FullScreenImageGallery > div:nth-child(3) > div > img').attr('src');

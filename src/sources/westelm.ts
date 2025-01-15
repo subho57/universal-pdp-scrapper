@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import axios from 'axios';
 import { load } from 'cheerio';
+
+import { getHtml } from '@/utils';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
@@ -16,8 +17,7 @@ export class Westelm {
       if (!this.url.includes('westelm')) {
         throw new Error('Invalid URL');
       }
-      const response = await axios.get(this.url);
-      html = response.data;
+      html = await getHtml(this.url);
     }
     const $ = load(html!);
     const thumbnail = $.html()?.match(/https:\/\/assets.weimgs.com\/weimgs\/rk\/images\/wcm\/products\/[a-z0-9/-]+.jpg/gm)?.[0];

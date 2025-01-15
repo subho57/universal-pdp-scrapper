@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import axios from 'axios';
 import { load } from 'cheerio';
+
+import { getHtml } from '@/utils';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
@@ -91,8 +92,7 @@ export class Homedepot {
       if (!this.url.includes('homedepot')) {
         throw new Error('Invalid URL');
       }
-      const response = await axios.get(this.url);
-      html = response.data as string;
+      html = await getHtml(this.url);
     }
     const $ = load(html!);
     const stringifiedLdJson = $('#thd-helmet__script--productStructureData').html();

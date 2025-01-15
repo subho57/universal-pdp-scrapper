@@ -145,7 +145,7 @@ export class Ikea {
         .get<IkeaModel>(`${Ikea.BASE_URL}/global/assets/rotera/resources/${this.sku}.json`)
         .then((response) => response.data);
     } catch (err) {
-      logger.error('getGLBs', (err as any)?.message, (err as any).response?.status, (err as any).response?.data);
+      logger.debug('getGLBs', (err as any)?.message, (err as any).response?.status, (err as any).response?.data);
       return null;
     }
   }

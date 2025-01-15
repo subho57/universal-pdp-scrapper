@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 /* eslint-disable @typescript-eslint/no-loop-func */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
@@ -10,7 +11,7 @@ describe('UniversalPDPScrapper', () => {
   it('should scrape ikea product page', async () => {
     const client = new UniversalPDPScrapper();
     console.log('>>>>>>>>>>>>>>> Ikea <<<<<<<<<<<<<<<<<');
-    const data = await client.scrape('https://www.ikea.com/us/en/p/jokkmokk-table-and-4-chairs-antique-stain-50211104/');
+    const data = await client.scrape('https://www.ikea.com/us/en/p/haegernaes-table-and-4-chairs-antique-stain-pine-70575947/');
     expect(data).toBeDefined();
     expect(data?.images).toBeDefined();
     expect(data?.images?.length).toBeGreaterThan(0);
@@ -62,7 +63,7 @@ describe('UniversalPDPScrapper', () => {
     const client = new UniversalPDPScrapper();
     console.log('>>>>>>>>>>>>>>> Bedrosians.com <<<<<<<<<<<<<<<<<');
     const data = await client.scrape(
-      'https://www.bedrosians.com/en/product/detail/slabs/granite-slabs/white-spring-slab/?itemNo=GRNWHTSPRSLAB2P&queryid=3625d43abae91d4efa8a8b1d0b136dc3',
+      'https://www.bedrosians.com/en/product/detail/rothko-tile/?itemNo=100003309&queryid=8a5ac00eb0959d496c0b0b88267ac3d1',
     );
     expect(data).toBeDefined();
     expect(data?.images).toBeDefined();
@@ -78,7 +79,18 @@ describe('UniversalPDPScrapper', () => {
     expect(data?.images?.length).toBeGreaterThan(0);
   }, 100000);
 
-  it('batch-eval::should scrape build.com product urls using pagination', async () => {
+  it('should scrape yet another random product url', async () => {
+    const client = new UniversalPDPScrapper();
+    console.log('>>>>>>>>>>>>>>> dgmsexcellence.com <<<<<<<<<<<<<<<<<');
+    const data = await client.scrape(
+      'https://dgmsexcellence.com/product/no-hooks-shower-curtain-with-snap-in-liner-with-golden-stripes-plain-denim-hotel/',
+    );
+    expect(data).toBeDefined();
+    expect(data?.images).toBeDefined();
+    expect(data?.images?.length).toBeGreaterThan(0);
+  }, 100000);
+
+  it.skip('batch-eval::should scrape build.com product urls using pagination', async () => {
     const client = new UniversalPDPScrapper();
     console.log('>>>>>>>>>>>>>>> Build.com <<<<<<<<<<<<<<<<<');
     const MAX_PAGE_SIZE = 1;

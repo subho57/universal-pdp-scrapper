@@ -1,10 +1,11 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-param-reassign */
-import axios from 'axios';
+import { load } from 'cheerio';
 import type { OpenAI } from 'openai';
 
 import CONFIG from './config';
-import { getClient, getCompletion } from './modules/openai';
+import { getClient, scrapeUsingAI } from './modules/openai';
 import { Logger } from './providers/log';
 import { Article } from './sources/article';
 import { Builddotcom } from './sources/builddotcom';
@@ -15,9 +16,9 @@ import { Homedepot } from './sources/homedepot';
 import { Ikea } from './sources/ikea';
 import { Rugsdotcom } from './sources/rugsdotcom';
 import { Zgallerie } from './sources/zgallerie';
-import type { ScrapperOutput } from './types/scrapperOutput';
+import type { ProductMetadata, ScrapperOutput } from './types/scrapperOutput';
 import { Types } from './types/scrapperOutput';
-import { capitalize, removeNullsAndUndefine } from './utils';
+import { capitalize, getHtml, removeNullsAndUndefined } from './utils';
 
 const logger = new Logger('ScrapperClient');
 
@@ -40,30 +41,8 @@ const isAnImage = (html: string): boolean => {
   return !html.includes('<html');
 };
 
-const getRawData = async (url: string) => {
+export const getRawData = async (url: string, html: string) => {
   try {
-    const parsedUrl = new URL(url);
-    // @ts-ignore
-    let { data: html } = await axios
-      .get<string>(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-          Accept: 'application/json, text/plain, */*',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          Origin: parsedUrl.origin,
-          Host: parsedUrl.host,
-          Connection: 'keep-alive',
-        },
-      })
-      .catch((err) => {
-        logger.error('getRawData.axios.get', err.message, err.response);
-        return { data: '<html><head><title></title></head></html>' };
-      });
-    if (typeof html !== 'string') {
-      html = JSON.stringify(html);
-    }
     if (isAnImage(html)) {
       return {
         images: [url],
@@ -155,6 +134,125 @@ const getRawData = async (url: string) => {
   }
 };
 
+export const getProductMetadata = (sourceUrl: string, html: string): ProductMetadata => {
+  try {
+    const $ = load(html);
+
+    // Extract Schema.org JSON-LD data
+    let schemaData: any = {};
+    try {
+      const jsonLdScripts = $('script[type="application/ld+json"]');
+      jsonLdScripts.each((_, element) => {
+        try {
+          const data = JSON.parse($(element).html() || '{}');
+          // Look for Product or WebPage type schemas
+          if (data['@type'] === 'Product' || data['@type'] === 'WebPage') {
+            schemaData = data;
+          }
+          // Handle array of schemas
+          if (Array.isArray(data)) {
+            data.forEach((item) => {
+              if (item['@type'] === 'Product' || item['@type'] === 'WebPage') {
+                schemaData = item;
+              }
+            });
+          }
+        } catch (e) {
+          console.warn('Error parsing JSON-LD script:', e);
+        }
+      });
+    } catch (e) {
+      console.warn('Error extracting Schema.org data:', e);
+    }
+
+    // Helper function to get meta content with multiple fallbacks
+    const getMetaContent = (ogTag: string, twitterTag: string, schemaPath: string[]): string => {
+      // Try OpenGraph
+      const ogContent = $(`meta[property="${ogTag}"]`).attr('content') || $(`meta[name="${ogTag}"]`).attr('content');
+      if (ogContent) return ogContent;
+
+      // Try Twitter
+      const twitterContent = $(`meta[name="${twitterTag}"]`).attr('content');
+      if (twitterContent) return twitterContent;
+
+      // Try Schema.org
+      let schemaContent = schemaData;
+      for (const path of schemaPath) {
+        schemaContent = schemaContent?.[path];
+        if (!schemaContent) break;
+      }
+      return typeof schemaContent === 'string' ? schemaContent : '';
+    };
+
+    // Helper function to get numeric content with fallbacks
+    const getNumericMetaContent = (ogTag: string, twitterTag: string, schemaPath: string[]): number => {
+      const value = getMetaContent(ogTag, twitterTag, schemaPath);
+      return value ? parseFloat(value) : 0;
+    };
+
+    // Initialize and populate images array with fallbacks
+    const images: string[] = [];
+
+    // Try OG images
+    $('meta[property="og:image"]').each((_, element) => {
+      const imageUrl = $(element).attr('content');
+      if (imageUrl && !images.includes(imageUrl)) {
+        images.push(imageUrl);
+      }
+    });
+
+    // If no OG images, try Twitter images
+    if (images.length === 0) {
+      $('meta[name="twitter:image"]').each((_, element) => {
+        const imageUrl = $(element).attr('content');
+        if (imageUrl && !images.includes(imageUrl)) {
+          images.push(imageUrl);
+        }
+      });
+    }
+
+    // If still no images, try Schema.org images
+    if (images.length === 0 && schemaData.image) {
+      const schemaImages = Array.isArray(schemaData.image) ? schemaData.image : [schemaData.image];
+
+      schemaImages.forEach((img: string) => {
+        if (img && !images.includes(img)) {
+          images.push(img);
+        }
+      });
+    }
+
+    // Get source domain from URL if available
+    const source = sourceUrl ? new URL(sourceUrl).hostname : '';
+
+    // Price extraction with Schema.org fallback
+    const priceString =
+      getMetaContent('og:price:amount', 'twitter:price:amount', ['offers', 'price']) ||
+      getMetaContent('product:price:amount', 'twitter:price', ['price']);
+
+    // Create the metadata object with all fallbacks
+    const metadata: ProductMetadata = {
+      product_name: getMetaContent('og:title', 'twitter:title', ['name']),
+      product_url: getMetaContent('og:url', 'twitter:url', ['url']) || sourceUrl,
+      type: getMetaContent('og:type', 'twitter:card', ['@type']),
+      price: parseFloat(priceString) || 0,
+      height: getNumericMetaContent('product:height', 'twitter:height', ['height', 'value']),
+      width: getNumericMetaContent('product:width', 'twitter:width', ['width', 'value']),
+      depth: getNumericMetaContent('product:depth', 'twitter:depth', ['depth', 'value']),
+      tags: getMetaContent('article:tag', 'twitter:label', ['keywords']),
+      images,
+      sku: getMetaContent('product:sku', 'twitter:data1', ['sku']),
+      source,
+      description: getMetaContent('og:description', 'twitter:description', ['description']),
+    };
+
+    return metadata;
+  } catch (error) {
+    console.error('Error processing content:', error);
+    throw error;
+  }
+};
+
 export class UniversalPDPScrapper {
   private readonly openAiClient: OpenAI;
 
@@ -200,54 +298,38 @@ export class UniversalPDPScrapper {
 
   scrape = async (url: string) => {
     try {
-      const [partialScrapperOutput, openAiOutput] = await Promise.all([
-        getRawData(url),
-        getCompletion(
-          `Consider this url: ${url} and extract the following information: product name, description (a string describing the product in one line such that, when this string is searched in google, it shows similar products), tags (a list of comma separated words relating to the product), product url, type(One of ${Object.values(
-            Types,
-          ).join(
-            ',',
-          )}), price(whatever currency converted to us dollar in format XXX.XX), exact height(in inches and upto one decimal place, in XX.X format without any unit), exact width(in inches and upto one decimal place, in XX.X format without any unit), exact depth(in inches and upto one decimal place, in XX.X format without any unit) and structure it properly in json schema like this: { product_name: string; product_url: string; type: string; price: string; height: string; width: string; depth: string; tags: string }
-          CRITICAL INSTRUCTION: Strictly return a json format without any plain text and without any '\`\`\`json' markdown formatting.`,
-          this.openAiClient,
-          CONFIG.OPEN_AI.MODEL,
-        ),
+      const htmlContent = await getHtml(url);
+      const productMetadata = getProductMetadata(url, htmlContent);
+      const [partialScrapperOutput, parsedOpenAiOutput] = await Promise.all([
+        getRawData(url, htmlContent),
+        scrapeUsingAI(this.openAiClient, url, htmlContent, undefined, undefined, CONFIG.OPEN_AI.MODEL).catch(() => ({}) as ProductMetadata),
       ]);
-      removeNullsAndUndefine(partialScrapperOutput ?? {});
-      let parsedOpenAiOutput: Record<string, any>;
-      try {
-        let formattedOpenAiOutput = openAiOutput?.replace('```json', '').replace('```', '');
-        formattedOpenAiOutput = formattedOpenAiOutput?.substring(
-          formattedOpenAiOutput.indexOf('{'),
-          formattedOpenAiOutput.lastIndexOf('}') + 1,
-        );
-        parsedOpenAiOutput = formattedOpenAiOutput ? JSON.parse(formattedOpenAiOutput) : {};
-      } catch (error: any) {
-        logger.error(error.message, openAiOutput);
-        parsedOpenAiOutput = {};
-      }
+      removeNullsAndUndefined(partialScrapperOutput ?? {});
       const scrapperOutput = {
         ...parsedOpenAiOutput,
+        ...productMetadata,
         ...partialScrapperOutput,
-        product_name: partialScrapperOutput?.product_name || parsedOpenAiOutput.product_name,
-        images: [...(partialScrapperOutput?.images ?? []), ...(parsedOpenAiOutput.images ?? [])],
+        product_name: parsedOpenAiOutput.product_name || productMetadata.product_name || partialScrapperOutput?.product_name,
+        images: Array.from(
+          new Set([...(productMetadata.images || []), ...(parsedOpenAiOutput.images ?? []), ...(partialScrapperOutput?.images ?? [])]),
+        ),
         description: (partialScrapperOutput?.description ?? '').concat(parsedOpenAiOutput.description ?? ''),
         tags: parsedOpenAiOutput.tags?.toLowerCase(),
+        height: Number(
+          (parsedOpenAiOutput.height || partialScrapperOutput?.height || productMetadata.height).toString().replace(/[^\d.]/g, ''),
+        ).toFixed(2),
+        width: Number(
+          (parsedOpenAiOutput.width || partialScrapperOutput?.width || productMetadata.width).toString().replace(/[^\d.]/g, ''),
+        ).toFixed(2),
+        depth: Number(
+          (parsedOpenAiOutput.depth || partialScrapperOutput?.depth || productMetadata.depth).toString().replace(/[^\d.]/g, ''),
+        ).toFixed(2),
+        price: Number(
+          (parsedOpenAiOutput.price || partialScrapperOutput?.price || productMetadata.price).toString().replace(/[^\d.]/g, ''),
+        ).toFixed(2),
       } as ScrapperOutput;
       if (!scrapperOutput) {
         throw new Error('Scrapper failed');
-      }
-      if (scrapperOutput.price) {
-        scrapperOutput.price = Number(scrapperOutput.price.replace(/[^\d.]/g, '')).toFixed(2);
-      }
-      if (scrapperOutput.height) {
-        scrapperOutput.height = Number(scrapperOutput.height.replace(/[^\d.]/g, '')).toFixed(2);
-      }
-      if (scrapperOutput.width) {
-        scrapperOutput.width = Number(scrapperOutput.width.replace(/[^\d.]/g, '')).toFixed(2);
-      }
-      if (scrapperOutput.depth) {
-        scrapperOutput.depth = Number(scrapperOutput.depth.replace(/[^\d.]/g, '')).toFixed(2);
       }
       if (!scrapperOutput.type) {
         scrapperOutput.type = determineType(`${scrapperOutput.product_name} ${scrapperOutput.product_url}`) ?? Types.PAINTING;

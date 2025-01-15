@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import axios from 'axios';
 import { load } from 'cheerio';
+
+import { getHtml } from '@/utils';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
@@ -16,8 +17,7 @@ export class Article {
       if (!this.url.includes('article')) {
         throw new Error('Invalid URL');
       }
-      const response = await axios.get(this.url);
-      html = response.data;
+      html = await getHtml(this.url);
     }
     const $ = load(html!);
     const dimension = $('#details > div > div.content.desktop.flex-grid > div:nth-child(3) > div > div')

@@ -1,12 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { customsearch } from '@googleapis/customsearch';
-import axios from 'axios';
 import { load } from 'cheerio';
 import { getJson } from 'serpapi';
 
 import { Logger } from '../providers/log';
 import type { ScrapperOutput } from '../types/scrapperOutput';
-import { capitalize } from '../utils';
+import { capitalize, getHtml } from '../utils';
 
 const logger = new Logger('googleScrapper');
 
@@ -87,11 +86,7 @@ export class Google {
   async extract(html?: string) {
     try {
       if (!html) {
-        const response = await axios.get(this.url).catch((err) => {
-          logger.error('extract.axios.get', err.message, err.response);
-          return { data: '<html><head><title></title></head></html>' };
-        });
-        html = response.data;
+        html = await getHtml(this.url);
       }
       const parsedURL = new URL(this.url);
       const domain = parsedURL.hostname.replace('www.', '');

@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import axios from 'axios';
 import { load } from 'cheerio';
+
+import { getHtml } from '@/utils';
 
 import type { ScrapperOutput } from '../types/scrapperOutput';
 
@@ -16,7 +17,7 @@ export class Wayfair {
       if (!this.url.includes('wayfair')) {
         throw new Error('Invalid URL');
       }
-      html = (await axios.get(this.url)).data;
+      html = await getHtml(this.url);
     }
     const $ = load(html!);
     const dimensions = $('#CollapsePanel-2 > div > div > div > div > div > div > div > span > dd:nth-child(2) > div')
