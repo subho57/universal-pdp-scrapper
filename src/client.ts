@@ -296,13 +296,15 @@ export class UniversalPDPScrapper {
     });
   }
 
-  scrape = async (url: string) => {
+  scrape = async (url: string, timeoutInSeconds = 15) => {
     try {
       const htmlContent = await getHtml(url);
       const productMetadata = getProductMetadata(url, htmlContent);
       const [partialScrapperOutput, parsedOpenAiOutput] = await Promise.all([
         getRawData(url, htmlContent),
-        scrapeUsingAI(this.openAiClient, url, htmlContent, undefined, undefined, CONFIG.OPEN_AI.MODEL).catch(() => ({}) as ProductMetadata),
+        scrapeUsingAI(this.openAiClient, url, htmlContent, undefined, undefined, CONFIG.OPEN_AI.MODEL, 112000, timeoutInSeconds).catch(
+          () => ({}) as ProductMetadata,
+        ),
       ]);
       removeNullsAndUndefined(partialScrapperOutput ?? {});
       removeNullsAndUndefined(parsedOpenAiOutput ?? {});

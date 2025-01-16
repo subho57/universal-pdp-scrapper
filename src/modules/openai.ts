@@ -34,43 +34,45 @@ export const getCompletion = async (prompt: string, client: OpenAI, model = 'gpt
   }
 };
 
-const trimToTokenLimit = (text: string, enc: Tiktoken, maxTokens = 128000): string => {
+const trimToTokenLimit = (text: string, enc: Tiktoken, maxTokens = 128000, separator = '-------'): string => {
+  // Add input validation
+  if (!text || !enc) {
+    return text;
+  }
+
   const tokens = enc.encode(text);
 
   if (tokens.length <= maxTokens) {
     return text;
   }
 
-  // Calculate how many tokens we need to remove
-  // const tokensToRemove = tokens.length - maxTokens;
+  if (text.includes(separator)) {
+    const parts = text.split(separator);
+    if (parts.length !== 3) {
+      // Handle invalid format more gracefully
+      return enc.decode(tokens.slice(0, maxTokens));
+    }
 
-  // If HTML content exists, trim it from the middle
-  if (text.includes('-------')) {
-    const parts = text.split('-------');
-    const beforeHtml = parts[0] || '';
-    const html = parts[1] || '';
-    const afterHtml = parts[2] || '';
-
-    // Encode each part to get token counts
+    const [beforeHtml, html, afterHtml] = parts;
     const beforeTokens = enc.encode(beforeHtml).length;
     const afterTokens = enc.encode(afterHtml).length;
-    const intermediatoryTokens = enc.encode('-------...[content trimmed]...-------').length;
+    const intermediatoryTokens = enc.encode(`${separator}...[content trimmed]...${separator}`).length;
 
-    // Calculate how much HTML content we can keep
     const availableTokens = maxTokens - beforeTokens - afterTokens - intermediatoryTokens;
-    const htmlTokens = enc.encode(html);
+    if (availableTokens < 0) {
+      // Handle case where surrounding content is already too large
+      return enc.decode(tokens.slice(0, maxTokens));
+    }
 
-    // Take half from the start and half from the end of HTML
+    const htmlTokens = enc.encode(html);
     const halfAvailable = Math.floor(availableTokens / 2);
     const startHtml = enc.decode(htmlTokens.slice(0, halfAvailable));
     const endHtml = enc.decode(htmlTokens.slice(-halfAvailable));
 
-    return `${beforeHtml}-------${startHtml}...[content trimmed]...${endHtml}-------${afterHtml}`;
+    return `${beforeHtml}${separator}${startHtml}...[content trimmed]...${endHtml}${separator}${afterHtml}`;
   }
 
-  // If no HTML content, just trim from the end
-  const trimmedTokens = tokens.slice(0, maxTokens);
-  return enc.decode(trimmedTokens);
+  return enc.decode(tokens.slice(0, maxTokens));
 };
 
 export const scrapeUsingAI = async (
@@ -80,10 +82,12 @@ export const scrapeUsingAI = async (
   userId?: string,
   metadata?: Record<string, string>,
   model = 'gpt-4o-mini',
-  trimToMaxToken = 112000, // Adjust based on model
+  trimToMaxToken = 112000,
+  timeoutSeconds = 29,
 ) => {
-  const enc = encodingForModel(model as TiktokenModel);
-  const systemContext = `You are tasked with a job to accept from a given product URL and optionally its HTML content from the user and return the extracted information in a structured JSON format. You should not prompt the user to provide any additional details; rather, work with the details that are already provided to you.
+  try {
+    const enc = encodingForModel(model as TiktokenModel);
+    const systemContext = `You are tasked with a job to accept from a given product URL and optionally its HTML content from the user and return the extracted information in a structured JSON format. You should not prompt the user to provide any additional details; rather, work with the details that are already provided to you.
 
 You should be able to extract the following information:
 - **Product Name**
@@ -139,44 +143,60 @@ Example JSON object for the product URL: [https://www.ikea.com/us/en/p/haegernae
   "source": "ikea",
   "description": "This sturdy dining set with a table and four chairs is perfect for your breakfast nook or smaller dining area. Solid pine is a natural material that ages beautifully and acquires its own unique character over time. Each table and chair has its own unique character due to the distinctive grain pattern. For a softer seat or to add a personal touch to the room, complete with a chair pad in the style and color of your choice."
 }`;
-  let userPrompt = `Here's the product URL: ${productUrl}${
-    htmlContent
-      ? `\nand the HTML content:
+    let userPrompt = `Here's the product URL: ${productUrl}${
+      htmlContent
+        ? `\nand the HTML content:
 -------
 ${htmlContent}
 -------
 `
-      : ''
-  }`.substring(0, 1048575);
+        : ''
+    }`.substring(0, 1048575);
 
-  // Calculate available tokens for user content
-  // Typically reserve ~1000 tokens for system context and response
-  const reservedTokens = enc.encode(systemContext).length; // Added buffer
-  const availableTokens = trimToMaxToken - reservedTokens;
+    const reservedTokens = enc.encode(systemContext).length;
+    const availableTokens = trimToMaxToken - reservedTokens;
+    userPrompt = trimToTokenLimit(userPrompt, enc, availableTokens);
 
-  // Trim content to fit within token limit
-  userPrompt = trimToTokenLimit(userPrompt, enc, availableTokens);
-  const result = await client.chat.completions.create({
-    model,
-    messages: [
-      {
-        role: 'system',
-        content: systemContext,
+    // Create the main API call promise
+    const apiCallPromise = client.chat.completions.create({
+      model,
+      messages: [
+        {
+          role: 'system',
+          content: systemContext,
+        },
+        {
+          role: 'user',
+          content: userPrompt,
+        },
+      ],
+      n: 1,
+      temperature: 0,
+      response_format: {
+        type: 'json_object',
       },
-      {
-        role: 'user',
-        content: userPrompt,
-      },
-    ],
-    n: 1,
-    temperature: 0,
-    response_format: {
-      type: 'json_object',
-    },
-    stream: false,
-    user: userId,
-    metadata,
-  });
+      stream: false,
+      user: userId,
+      metadata,
+    });
 
-  return parseJSONFromMarkdownString<ProductMetadata>(result.choices[0]?.message?.content || '');
+    // If timeout is provided, race between the API call and a timeout promise
+    if (timeoutSeconds) {
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Operation timed out after ${timeoutSeconds} seconds`));
+        }, timeoutSeconds * 1000);
+      });
+
+      const result = (await Promise.race([apiCallPromise, timeoutPromise])) as OpenAI.Chat.Completions.ChatCompletion;
+      return parseJSONFromMarkdownString<ProductMetadata>(result.choices[0]?.message?.content || '');
+    }
+
+    // If no timeout provided, just execute the API call
+    const result = await apiCallPromise;
+    return parseJSONFromMarkdownString<ProductMetadata>(result.choices[0]?.message?.content || '');
+  } catch (error) {
+    logger.error('scrapeUsingAI', error instanceof Error ? error.message : 'Unknown error');
+    return {} as ProductMetadata;
+  }
 };

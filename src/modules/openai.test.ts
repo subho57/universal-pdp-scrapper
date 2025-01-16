@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-loop-func */
+/* eslint-disable no-restricted-syntax */
 import type { OpenAI } from 'openai';
 
 import CONFIG from '@/config';
@@ -45,7 +47,7 @@ describe('scrapeUsingAI', () => {
     },
   ];
 
-  testCases.forEach(({ name, url }) => {
+  for (const { name, url } of testCases) {
     it(`should scrape ${name}`, async () => {
       // Get HTML content
       const html = await getHtml(url);
@@ -53,6 +55,8 @@ describe('scrapeUsingAI', () => {
 
       // Scrape using AI
       const result = await scrapeUsingAI(client, url, html);
+
+      console.debug(result);
 
       // Assertions
       expect(result).toBeDefined();
@@ -74,8 +78,8 @@ describe('scrapeUsingAI', () => {
       expect(result?.sku).toBeDefined();
       expect(result?.source).toBeDefined();
       expect(result?.description).toBeDefined();
-    }, 300000);
-  });
+    }, 20_000);
+  }
 
   it('should handle invalid URLs', async () => {
     const invalidUrl = 'https://invalid-url.com/product';
