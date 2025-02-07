@@ -12,3 +12,4 @@ export * from './sources/wayfair';
 export * from './sources/westelm';
 export * from './sources/zgallerie';
 export * from './types/scrapperOutput';
+export * from './utils';
